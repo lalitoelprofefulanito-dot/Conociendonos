@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F4667">
+<title>Conociéndonos 2.0 — Prototipo navegable (Iteración 1)</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Conociéndonos">
+<style>
+:root{
+  --azul:#2C5F8A; --azul-suave:#EAF1F7; --azul-oscuro:#1F4667;
+  --verde:#4B8B6F; --verde-suave:#E9F3EE;
+  --ambar:#B8862C; --ambar-suave:#FBF1DE;
+  --rojo:#A6543F; --rojo-suave:#F7EAE6;
+  --gris-900:#2A2E33; --gris-700:#565C64; --gris-500:#7C838C; --gris-300:#C7CCD1; --gris-100:#EEF0F2;
+  --superficie-consulta:#F4F4F2;
+  --fondo:#FAFAF8; --tarjeta:#FFFFFF;
+  --borde-radius:10px;
+  --sombra:0 1px 2px rgba(30,30,30,.06), 0 1px 8px rgba(30,30,30,.05);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  background:var(--fondo); color:var(--gris-900); line-height:1.5;
+  font-size:15px;
+}
+h1,h2,h3,h4{font-weight:600; margin:0 0 8px 0; line-height:1.25;}
+h1{font-size:22px;}
+h2{font-size:17px;}
+h3{font-size:15px;}
+p{margin:0 0 10px 0;}
+a{color:var(--azul); text-decoration:none;}
+.small{font-size:12.5px; color:var(--gris-500);}
+.muted{color:var(--gris-500);}
+button{font-family:inherit; font-size:14px; cursor:pointer;}
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{
+  outline:3px solid var(--azul-oscuro); outline-offset:2px;
+}
+
+/* ---------- layout shell ---------- */
+#proto-banner{
+  background:var(--gris-900); color:#fff; text-align:center; font-size:12.5px;
+  padding:5px 8px; letter-spacing:.02em;
+}
+#app-shell{display:flex; min-height:calc(100vh - 28px);}
+#sidebar{
+  width:210px; background:var(--tarjeta); border-right:1px solid var(--gris-100);
+  display:flex; flex-direction:column; padding:14px 10px; flex-shrink:0;
+}
+#sidebar .brand{font-weight:700; font-size:16px; color:var(--azul-oscuro); padding:6px 10px 16px;}
+.navlink{
+  display:flex; align-items:center; gap:8px; padding:9px 10px; border-radius:8px; color:var(--gris-700);
+  font-size:14px; margin-bottom:2px; cursor:pointer; border:none; background:none; text-align:left; width:100%;
+}
+.navlink:hover{background:var(--gris-100);}
+.navlink.active{background:var(--azul-suave); color:var(--azul-oscuro); font-weight:600;}
+.navlink .ic{width:18px; text-align:center;}
+.navlink[disabled]{opacity:.4; cursor:not-allowed;}
+#sidebar .navgroup-label{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--gris-500); margin:14px 10px 4px;}
+
+#main-col{flex:1; min-width:0; display:flex; flex-direction:column;}
+#topbar{
+  background:var(--tarjeta); border-bottom:1px solid var(--gris-100); padding:10px 20px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:20;
+}
+#topbar .ctx{font-size:13px; color:var(--gris-700);}
+#topbar .ctx b{color:var(--gris-900);}
+#topbar-right{display:flex; align-items:center; gap:14px;}
+.iconbtn{background:none; border:none; font-size:18px; position:relative; padding:4px 6px; border-radius:6px; color:var(--gris-700);}
+.iconbtn:hover{background:var(--gris-100);}
+.badge-count{
+  position:absolute; top:-2px; right:-2px; background:var(--rojo); color:#fff; font-size:10px;
+  border-radius:8px; min-width:15px; height:15px; display:flex; align-items:center; justify-content:center; padding:0 3px;
+}
+#account-chip{display:flex; align-items:center; gap:6px; background:var(--gris-100); border:none; border-radius:20px; padding:5px 12px 5px 6px;}
+.avatar{width:24px; height:24px; border-radius:50%; background:var(--azul); color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;}
+
+#content{padding:22px 26px 60px; max-width:980px;}
+.breadcrumb{font-size:12.5px; color:var(--gris-500); margin-bottom:10px;}
+.breadcrumb a{color:var(--gris-500);}
+.breadcrumb .cur{color:var(--gris-900); font-weight:600;}
+
+/* ---------- cards & chips ---------- */
+.card{
+  background:var(--tarjeta); border:1px solid var(--gris-100); border-radius:var(--borde-radius);
+  box-shadow:var(--sombra); padding:16px 18px; margin-bottom:14px;
+}
+.card.consulta{background:var(--superficie-consulta); border-color:var(--gris-100);}
+.card.clickable{cursor:pointer;}
+.card.clickable:hover{border-color:var(--azul);}
+.card.dim{opacity:.72;}
+
+.chip{
+  display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600;
+  padding:3px 10px; border-radius:20px; letter-spacing:.01em;
+}
+.chip-activo{background:var(--verde-suave); color:var(--verde);}
+.chip-pendiente{background:var(--ambar-suave); color:var(--ambar);}
+.chip-cerrado{background:var(--gris-100); color:var(--gris-700);}
+.chip-vencida, .chip-revocada{background:var(--rojo-suave); color:var(--rojo);}
+.chip-familia{background:#EFE9F7; color:#6A4E97;}
+.chip-escuela{background:#E4F0F5; color:#2C6E8A;}
+
+.chip-aprendizaje-propuesto{background:#E7EAF2; color:#4C5B85;}
+.chip-aprendizaje-construccion{background:var(--azul-suave); color:var(--azul);}
+.chip-aprendizaje-sustentado{background:var(--verde-suave); color:var(--verde);}
+.chip-aprendizaje-revision{background:var(--ambar-suave); color:var(--ambar);}
+.chip-aprendizaje-cerrado{background:var(--gris-100); color:var(--gris-700);}
+
+.chip-estr-explorar{background:var(--gris-100); color:var(--gris-700);}
+.chip-estr-exploracion{background:var(--azul-suave); color:var(--azul);}
+.chip-estr-resultados{background:var(--verde-suave); color:var(--verde);}
+.chip-estr-ajustes{background:var(--ambar-suave); color:var(--ambar);}
+.chip-estr-pausa{background:#F1EEE6; color:#8A7A4E;}
+.chip-estr-cerrada{background:var(--gris-100); color:var(--gris-700);}
+
+/* buttons */
+.btn{border-radius:8px; padding:8px 16px; font-weight:600; border:1px solid transparent; display:inline-flex; align-items:center; gap:6px;}
+.btn-primary{background:var(--azul); color:#fff;}
+.btn-primary:hover{background:var(--azul-oscuro);}
+.btn-secondary{background:#fff; border-color:var(--gris-300); color:var(--gris-900);}
+.btn-secondary:hover{border-color:var(--azul);}
+.btn-text{background:none; border:none; color:var(--azul); padding:6px 4px; font-weight:600;}
+.btn-danger{background:#fff; border-color:var(--rojo); color:var(--rojo);}
+.btn-danger:hover{background:var(--rojo-suave);}
+.btn-sm{padding:5px 12px; font-size:13px;}
+.btn[disabled]{opacity:.45; cursor:not-allowed;}
+.btn-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;}
+
+/* forms */
+.field{margin-bottom:14px;}
+.field label{display:block; font-size:13px; font-weight:600; margin-bottom:5px;}
+.field .req{color:var(--rojo);}
+.field .help{font-size:12px; color:var(--gris-500); margin-top:4px;}
+.field input[type=text], .field input[type=date], .field textarea, .field select{
+  width:100%; padding:9px 11px; border:1px solid var(--gris-300); border-radius:8px; font-size:14px; font-family:inherit;
+}
+.field textarea{min-height:70px; resize:vertical;}
+.field.err input, .field.err textarea{border-color:var(--rojo);}
+.field .errtext{color:var(--rojo); font-size:12.5px; margin-top:4px; display:none;}
+.field.err .errtext{display:block;}
+.field-row{display:flex; gap:12px;}
+.field-row .field{flex:1;}
+
+/* tabs */
+.tabs{display:flex; gap:2px; border-bottom:1px solid var(--gris-100); margin-bottom:16px; flex-wrap:wrap;}
+.tab{padding:9px 14px; font-size:13.5px; font-weight:600; color:var(--gris-500); border:none; background:none; border-bottom:2px solid transparent; cursor:pointer;}
+.tab.active{color:var(--azul); border-bottom-color:var(--azul);}
+.tab:hover{color:var(--azul-oscuro);}
+
+/* vigencia bar */
+.vigencia{margin:6px 0;}
+.vigencia .bar{height:6px; background:var(--gris-100); border-radius:4px; overflow:hidden; margin-bottom:4px;}
+.vigencia .bar-fill{height:100%; border-radius:4px;}
+.vigencia.ok .bar-fill{background:var(--verde);}
+.vigencia.pronto .bar-fill{background:var(--ambar);}
+.vigencia.vencida .bar-fill{background:var(--rojo);}
+.vigencia-text{font-size:12.5px; font-weight:600;}
+.vigencia.ok .vigencia-text{color:var(--verde);}
+.vigencia.pronto .vigencia-text{color:var(--ambar);}
+.vigencia.vencida .vigencia-text{color:var(--rojo);}
+
+/* banners */
+.banner{border-radius:8px; padding:10px 14px; font-size:13.5px; margin-bottom:14px; display:flex; gap:10px; align-items:flex-start;}
+.banner-info{background:var(--azul-suave); color:var(--azul-oscuro);}
+.banner-warn{background:var(--ambar-suave); color:#7A5A1B;}
+.banner-neutral{background:var(--gris-100); color:var(--gris-700);}
+
+/* toasts */
+#toast-region{position:fixed; top:16px; right:16px; z-index:200; display:flex; flex-direction:column; gap:8px; max-width:340px;}
+.toast{background:var(--verde-suave); color:#2E6349; border-radius:8px; padding:10px 14px; font-size:13.5px; box-shadow:var(--sombra); border:1px solid #cfe6da;}
+
+/* modal */
+#modal-overlay{position:fixed; inset:0; background:rgba(30,32,34,.45); display:none; align-items:center; justify-content:center; z-index:100; padding:20px;}
+#modal-overlay.open{display:flex;}
+.modal{background:#fff; border-radius:12px; max-width:480px; width:100%; padding:22px 24px; box-shadow:0 10px 40px rgba(0,0,0,.2); max-height:85vh; overflow:auto;}
+.modal h2{margin-bottom:4px;}
+.modal .modal-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:18px;}
+.modal .warn-box{background:var(--ambar-suave); color:#7A5A1B; border-radius:8px; padding:10px 12px; font-size:13px; margin:12px 0;}
+
+/* misc */
+.divider{border:none; border-top:1px solid var(--gris-100); margin:14px 0;}
+.trace-panel{background:var(--superficie-consulta); border-radius:8px; padding:10px 12px; font-size:12px; color:var(--gris-700); max-height:150px; overflow:auto;}
+.trace-panel .ln{padding:2px 0; border-bottom:1px dashed var(--gris-300);}
+.trace-panel .ln:last-child{border:none;}
+.empty-state{text-align:center; padding:40px 20px; color:var(--gris-500);}
+.dl{display:grid; grid-template-columns:140px 1fr; gap:6px 14px; font-size:13.5px;}
+.dl dt{color:var(--gris-500); font-weight:600;}
+.dl dd{margin:0;}
+.section-label{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--gris-500); margin:18px 0 8px;}
+
+/* responsive */
+@media (max-width:760px){
+  #app-shell{flex-direction:column;}
+  #sidebar{
+    width:100%; flex-direction:row; overflow-x:auto; border-right:none; border-bottom:1px solid var(--gris-100);
+    padding:8px; gap:2px;
+  }
+  #sidebar .brand{display:none;}
+  #sidebar .navgroup-label{display:none;}
+  .navlink{white-space:nowrap; padding:8px 10px;}
+  #content{padding:16px;}
+  .field-row{flex-direction:column; gap:0;}
+  .modal{max-width:100%;}
+}
+</style>
+</head>
+<body>
+<div id="proto-banner">PROTOTIPO NAVEGABLE — ITERACIÓN 1 · DATOS ÚNICAMENTE FICTICIOS · Conociéndonos 2.0</div>
+<div id="app-shell">
+  <nav id="sidebar" aria-label="Navegación principal"></nav>
+  <div id="main-col">
+    <header id="topbar"></header>
+    <main id="content" tabindex="-1"></main>
+  </div>
+</div>
+<div id="toast-region" aria-live="polite"></div>
+<div id="modal-overlay" role="presentation"></div>
+
+<script>
+/* ============================================================
+   CONOCIÉNDONOS 2.0 — PROTOTIPO NAVEGABLE (ITERACIÓN 1)
+   Vanilla JS, un solo archivo, sin backend real.
+   Toda acción con efecto de "backend" está simulada y marcada
+   como tal en el panel de trazabilidad de cada pantalla.
+   ============================================================ */
+
+// ---------- utilidades de fecha ----------
+function todayISO(){ return "2026-08-24"; }
+function addDays(iso, days){ const d=new Date(iso+"T00:00:00"); d.setDate(d.getDate()+days); return d.toISOString().slice(0,10); }
+function daysBetween(a,b){ return Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/86400000); }
+function fmt(iso){ const d=new Date(iso+"T00:00:00"); return d.toLocaleDateString("es-MX",{day:"2-digit",month:"short",year:"numeric"}); }
+function nowStamp(){ return "24/08/2026, " + new Date().toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}); }
+
+// ---------- DATOS FICTICIOS (ninguno corresponde a personas reales) ----------
+const DATA = {
+  espacios: [
+    {id:"fam", tipo:"Familia", etiqueta:"Familia — Relación con Persona acompañada (ficticia)"},
+    {id:"esc", tipo:"Escuela", etiqueta:"Escuela — Docente de 4°A (cuenta institucional ficticia)"}
+  ],
+  usuario: { nombre:"Usuario Demostrativo", correoFam:"familia.demo@ejemplo-ficticio.org", correoEsc:"docente.demo@docente.aefcm.gob.mx" },
+  procesos: [
+    {
+      id:"P1", estado:"activo", espacio:"Familia",
+      situacion:"Dificultad para iniciar la tarea escolar sin acompañamiento cercano de un adulto",
+      finalidad:"Comprender qué apoyos ayudan a iniciar la tarea con mayor autonomía",
+      pregunta:"¿Qué condiciones ayudan a que la tarea se inicie sin necesitar recordatorios repetidos?",
+      contexto:"En casa, después de la escuela, durante la tarea de matemáticas",
+      creado:"2026-06-02", proximaRevision:"2026-09-02", ampliaciones:1,
+      refPersona:"Proceso vinculado a una Relación familiar (referencia ficticia)"
+    },
+    {
+      id:"P2", estado:"cerrado", espacio:"Familia",
+      situacion:"Conflictos frecuentes al compartir materiales durante el trabajo en equipo",
+      finalidad:"Comprender qué ayuda a compartir materiales sin conflicto",
+      pregunta:"¿Qué acuerdos previos reducen el conflicto al compartir materiales?",
+      contexto:"En el aula, durante actividades de trabajo en equipo",
+      creado:"2026-02-10", cerrado:"2026-06-10", proximaRevision:null, ampliaciones:0,
+      refPersona:"Proceso vinculado a una Relación familiar (referencia ficticia)"
+    }
+  ],
+  situacionesAmpliacion:{
+    P1:[{fecha:"2026-07-14", descripcion:"La dificultad también aparece los fines de semana con tareas de lectura", contexto:"En casa, sábados por la mañana"}]
+  },
+  observaciones:{
+    P1:[
+      {id:"O1", fecha:"2026-06-05", perspectiva:"Familia", descripcion:"Tardó 25 minutos en sentarse a trabajar; se distrajo varias veces antes de comenzar."},
+      {id:"O2", fecha:"2026-06-19", perspectiva:"Familia", descripcion:"Con un temporizador visible, comenzó la tarea a los 6 minutos."},
+      {id:"O3", fecha:"2026-07-02", perspectiva:"Escuela", descripcion:"En el aula, inicia el trabajo individual con mayor facilidad cuando la consigna está dividida en pasos escritos."},
+      {id:"O4", fecha:"2026-07-20", perspectiva:"Familia", descripcion:"El fin de semana, con la tarea anticipada la noche anterior, comenzó sin recordatorios."}
+    ],
+    P2:[
+      {id:"O5", fecha:"2026-02-15", perspectiva:"Escuela", descripcion:"Se negoció el uso de materiales antes de iniciar la actividad, sin intervención docente."}
+    ]
+  },
+  estrategias:{
+    P1:[
+      {id:"E1", descripcion:"Usar un temporizador visual de 10 minutos antes de iniciar", estado:"Con resultados observados", origen:"Familia"},
+      {id:"E2", descripcion:"Anticipar la tarea la noche anterior, revisando juntos qué se necesita", estado:"En exploración", origen:"Familia"},
+      {id:"E3", descripcion:"Trabajar en un espacio distinto al de juego", estado:"Requiere ajustes", origen:"Escuela"},
+      {id:"E4", descripcion:"Dividir la tarea en pasos escritos y visibles", estado:"Cerrada", origen:"Escuela", notaOrigen:null}
+    ],
+    P2:[
+      {id:"E5", descripcion:"Dividir la tarea en pasos escritos y visibles", estado:"Por explorar", origen:"Escuela", notaOrigen:"Basada en una Estrategia explorada antes en otro Proceso"}
+    ]
+  },
+  resultados:{
+    E1:[
+      {fecha:"2026-06-19", descripcion:"Comenzó la tarea a los 6 minutos, sin recordatorios adicionales."},
+      {fecha:"2026-07-03", descripcion:"Comenzó a los 8 minutos; pidió ayuda para configurar el temporizador."}
+    ],
+    E3:[
+      {fecha:"2026-06-28", descripcion:"El cambio de espacio no mostró diferencia clara; se sugiere ajustar el horario también."}
+    ]
+  },
+  aprendizajes:{
+    P1:[
+      {id:"L1", descripcion:"Iniciar resulta más fácil cuando la tarea se presenta dividida en pasos concretos y con un límite de tiempo visible.", estado:"Sustentado contextualmente", evidencia:["O2","O3"], ia:false},
+      {id:"L2", descripcion:"Anticipar la tarea la noche anterior podría reducir la necesidad de recordatorios.", estado:"Propuesto", evidencia:["O4"], ia:true, iaConfirmadoPor:"Usuario Demostrativo"},
+      {id:"L3", descripcion:"Las tareas largas sin pausas visibles generaban mayor frustración al iniciar.", estado:"Cerrado", evidencia:["O1"], ia:false}
+    ]
+  },
+  acuerdos:{
+    P1:[
+      {id:"AC1", estado:"Confirmado", contenido:"Familia y Escuela acuerdan usar el mismo temporizador visual de 10 minutos, tanto en casa como en el trabajo individual en el aula.",
+       seguimientos:[{fecha:"2026-07-10", descripcion:"Ambas partes reportan que el temporizador sigue en uso."}]}
+    ]
+  },
+  conexiones:[
+    {id:"C1", estado:"Activa", familiaLabel:"Familia (Relación ficticia)", escuelaLabel:"Escuela — Prof. Ana (ficticia), 4°A",
+     elementos:[
+       {tipo:"Observación", ref:"O3", resumen:"Observación del 02/07/2026 sobre inicio de trabajo individual"},
+       {tipo:"Aprendizaje", ref:"L1", resumen:"Aprendizaje: pasos concretos y límite de tiempo visible"}
+     ]}
+  ],
+  autorizaciones:[
+    {id:"A1", tipo:"ordinaria", otorgante:"Familia (ficticia)", receptor:"Prof. Ana López (docente.demo@docente.aefcm.gob.mx)",
+     objeto:"Proceso P1", finalidad:"Colaborar en el seguimiento del proceso de la tarea escolar",
+     inicio:"2026-06-02", vigenciaDias:90, estado:"vigente"},
+    {id:"A2", tipo:"ordinaria", otorgante:"Familia (ficticia)", receptor:"Prof. Ana López (docente.demo@docente.aefcm.gob.mx)",
+     objeto:"Aprendizaje L1", finalidad:"Consultar el aprendizaje compartido para dar continuidad en el aula",
+     inicio:"2026-05-31", vigenciaDias:90, estado:"vigente"},
+    {id:"A3", tipo:"ordinaria", otorgante:"Familia (ficticia)", receptor:"Colaborador Temporal (ficticio)",
+     objeto:"Proceso P2", finalidad:"Apoyar temporalmente el seguimiento del proceso",
+     inicio:"2026-03-01", vigenciaDias:60, estado:"revocada", revocadaEl:"2026-04-15", revocadaPor:"Familia (ficticia)"}
+  ],
+  notificaciones:[
+    {id:"N1", tipo:"Conexión aceptada", fecha:"2026-06-03", leida:true, texto:"La Escuela aceptó tu solicitud de conexión.", destino:{screen:"puente"}},
+    {id:"N2", tipo:"Autorización próxima a vencer", fecha:"2026-08-20", leida:false, texto:"Una autorización que otorgaste está próxima a vencer.", destino:{screen:"autorizaciones"}},
+    {id:"N3", tipo:"Acuerdo confirmado", fecha:"2026-07-05", leida:false, texto:"Se confirmó un Acuerdo en un Proceso.", destino:{screen:"proceso", params:{id:"P1", tab:"acuerdos"}}},
+    {id:"N4", tipo:"Seguimiento registrado", fecha:"2026-07-10", leida:true, texto:"Se registró un nuevo seguimiento en un Acuerdo.", destino:{screen:"proceso", params:{id:"P1", tab:"acuerdos"}}},
+    {id:"N5", tipo:"Elemento compartido", fecha:"2026-07-02", leida:true, texto:"Se compartió un elemento contigo a través del Puente.", destino:{screen:"puente"}}
+  ]
+};
+
+// Ajustar A2 para que quede "próxima a vencer" respecto de hoy (24/08/2026)
+DATA.autorizaciones[1].inicio = "2026-05-31"; // vence 2026-08-29 → 5 días, próxima a vencer
+
+// ---------- ESTADO DE APLICACIÓN ----------
+const STATE = {
+  autenticado:false,
+  espacio:null, // "fam" | "esc"
+  screen:"acceso",
+  params:{},
+  history:[],
+  trace:[], // registro de trazabilidad simulada, global
+  sesion:{ activa:false, inicioSesion:null, reautenticada:false },
+};
+
+function pushTrace(msg){
+  STATE.trace.unshift({t:nowStamp(), msg});
+  if(STATE.trace.length>40) STATE.trace.pop();
+}
+
+function goTo(screen, params){
+  params = params || {};
+  STATE.history.push({screen:STATE.screen, params:STATE.params});
+  STATE.screen = screen;
+  STATE.params = params;
+  render();
+  document.getElementById("content").focus();
+}
+function goBack(){
+  const prev = STATE.history.pop();
+  if(prev){ STATE.screen=prev.screen; STATE.params=prev.params; render(); }
+  else { goTo("mis-procesos"); }
+}
+
+// ---------- toasts ----------
+function toast(msg){
+  const region = document.getElementById("toast-region");
+  const el = document.createElement("div");
+  el.className = "toast"; el.textContent = msg; el.setAttribute("role","status");
+  region.appendChild(el);
+  setTimeout(()=>{ el.style.transition="opacity .3s"; el.style.opacity="0"; setTimeout(()=>el.remove(),300); }, 3200);
+}
+
+// ---------- modal ----------
+function openModal(html, onOpen){
+  const overlay = document.getElementById("modal-overlay");
+  overlay.innerHTML = '<div class="modal" role="dialog" aria-modal="true">'+html+'</div>';
+  overlay.classList.add("open");
+  overlay.onclick = (e)=>{ if(e.target===overlay) closeModal(); };
+  document.addEventListener("keydown", modalEscHandler);
+  const focusable = overlay.querySelector("button, input, textarea, select");
+  if(focusable) focusable.focus();
+  if(onOpen) onOpen();
+}
+function modalEscHandler(e){ if(e.key==="Escape") closeModal(); }
+function closeModal(){
+  document.getElementById("modal-overlay").classList.remove("open");
+  document.getElementById("modal-overlay").innerHTML="";
+  document.removeEventListener("keydown", modalEscHandler);
+}
+function confirmModal(opts){
+  // opts: {title, body, warn, confirmLabel, danger, onConfirm}
+  openModal(`
+    <h2>${opts.title}</h2>
+    <p class="muted">${opts.body}</p>
+    ${opts.warn?`<div class="warn-box">${opts.warn}</div>`:""}
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn ${opts.danger?'btn-danger':'btn-primary'}" id="modal-confirm-btn">${opts.confirmLabel||"Confirmar"}</button>
+    </div>
+  `, ()=>{
+    document.getElementById("modal-confirm-btn").onclick = ()=>{ closeModal(); opts.onConfirm(); };
+    document.getElementById("modal-confirm-btn").blur();
+    document.querySelector(".modal .btn-secondary").focus();
+  });
+}
+
+// ---------- shell: sidebar + topbar ----------
+function currentProceso(){ return DATA.procesos.find(p=>p.id===STATE.params.id); }
+
+function renderSidebar(){
+  const esc = STATE.espacio;
+  const items = [
+    {group:"Trabajo"},
+    {screen:"mis-procesos", label:"Inicio / Mis Procesos", ic:"🗂️"},
+    {screen:"puente", label:"Puente Familia-Escuela", ic:"🌉"},
+    {screen:"autorizaciones", label:"Autorizaciones", ic:"🔑"},
+    {group:"Cuenta"},
+    {screen:"notificaciones", label:"Notificaciones", ic:"🔔"},
+    {screen:"sesion", label:"Identidad y Sesión", ic:"👤"},
+  ];
+  let html = `<div class="brand">Conociéndonos</div>`;
+  items.forEach(it=>{
+    if(it.group){ html+=`<div class="navgroup-label">${it.group}</div>`; return; }
+    const active = STATE.screen===it.screen ? "active":"";
+    html += `<button class="navlink ${active}" onclick="goTo('${it.screen}')"><span class="ic">${it.ic}</span>${it.label}</button>`;
+  });
+  document.getElementById("sidebar").innerHTML = html;
+}
+
+function renderTopbar(){
+  const unread = DATA.notificaciones.filter(n=>!n.leida).length;
+  const espacioLabel = STATE.espacio==="esc" ? "Escuela — Docente de 4°A" : "Familia";
+  const initials = STATE.espacio==="esc" ? "PA" : "UD";
+  let ctxHtml = `<div class="ctx">Espacio activo: <b>${espacioLabel}</b> · <a href="#" onclick="event.preventDefault(); goTo('seleccion-contexto')">cambiar</a></div>`;
+  document.getElementById("topbar").innerHTML = `
+    ${ctxHtml}
+    <div id="topbar-right">
+      <button class="iconbtn" title="Notificaciones" onclick="goTo('notificaciones')">🔔${unread?`<span class="badge-count">${unread}</span>`:""}</button>
+      <button id="account-chip" onclick="goTo('sesion')"><span class="avatar">${initials}</span><span class="small">Usuario Demostrativo</span></button>
+    </div>
+  `;
+}
+
+function breadcrumb(items){
+  // items: [{label, screen, params} ...] last one is current
+  let html = '<div class="breadcrumb">';
+  items.forEach((it,i)=>{
+    if(i>0) html += " / ";
+    if(i===items.length-1) html += `<span class="cur">${it.label}</span>`;
+    else html += `<a href="#" onclick='event.preventDefault(); goTo("${it.screen}"${it.params?`, ${JSON.stringify(it.params)}`:""})'>${it.label}</a>`;
+  });
+  html += "</div>";
+  return html;
+}
+
+// ---------- MAIN RENDER DISPATCH ----------
+function render(){
+  if(!STATE.autenticado){
+    document.getElementById("sidebar").innerHTML="";
+    document.getElementById("topbar").innerHTML="";
+    document.getElementById("content").innerHTML = STATE.screen==="modo-demo-info" ? screenModoDemoInfo() : screenAcceso();
+    return;
+  }
+  if(STATE.screen==="seleccion-contexto"){
+    document.getElementById("sidebar").innerHTML="";
+    document.getElementById("topbar").innerHTML="";
+    document.getElementById("content").innerHTML = screenSeleccionContexto();
+    return;
+  }
+  renderSidebar();
+  renderTopbar();
+  let html = "";
+  switch(STATE.screen){
+    case "mis-procesos": html = screenMisProcesos(); break;
+    case "proceso": html = screenDetalleProceso(); break;
+    case "puente": html = screenPuente(); break;
+    case "autorizaciones": html = screenAutorizaciones(); break;
+    case "notificaciones": html = screenNotificaciones(); break;
+    case "sesion": html = screenSesion(); break;
+    default: html = screenMisProcesos();
+  }
+  document.getElementById("content").innerHTML = html;
+}
+
+// ============================================================
+// PANTALLA 1 — ACCESO / AUTENTICACIÓN
+// ============================================================
+function screenAcceso(){
+  return `
+  <div style="min-height:calc(100vh - 28px); display:flex; align-items:center; justify-content:center; padding:20px;">
+    <div class="card" style="max-width:380px; width:100%;">
+      <h1 style="text-align:center; color:var(--azul-oscuro);">Conociéndonos</h1>
+      <p class="small" style="text-align:center; margin-bottom:20px;">Acompañamiento situado, familia y escuela</p>
+      <div class="field">
+        <label for="in-correo">Correo electrónico</label>
+        <input type="text" id="in-correo" placeholder="tucorreo@ejemplo.org" value="familia.demo@ejemplo-ficticio.org">
+      </div>
+      <div class="field">
+        <label for="in-pass">Contraseña</label>
+        <input type="text" id="in-pass" placeholder="••••••••" value="demo-ficticio">
+      </div>
+      <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="doLogin()">Iniciar sesión</button>
+      <p class="small" style="text-align:center; margin-top:16px;">
+        <a href="#" onclick="event.preventDefault(); alert('Prototipo: el Modo Demostración es una pantalla propia de la Fase 5 (Pantalla 24), fuera del alcance de esta primera iteración. Este prototipo ya usa exclusivamente datos ficticios.')" style="color:#6A4E97; font-weight:600;">Entrar al Modo Demostración</a>
+      </p>
+      <hr class="divider">
+      <p class="small">Cuentas institucionales reconocidas: <b>@aefcm.gob.mx</b> y <b>@docente.aefcm.gob.mx</b>. El dominio, por sí solo, no concede acceso a contenido pedagógico.</p>
+    </div>
+  </div>`;
+}
+function doLogin(){
+  const correo = document.getElementById("in-correo").value;
+  pushTrace(`Verificación de acceso simulada para ${correo}.`);
+  STATE.autenticado = true;
+  STATE.sesion.activa = true;
+  STATE.sesion.inicioSesion = nowStamp();
+  toast("Sesión iniciada.");
+  STATE.screen = "seleccion-contexto";
+  render();
+}
+
+// ============================================================
+// PANTALLA 2 — SELECCIÓN DE CONTEXTO DE TRABAJO
+// ============================================================
+function screenSeleccionContexto(){
+  return `
+  <div style="min-height:calc(100vh - 28px); display:flex; align-items:center; justify-content:center; padding:20px;">
+    <div style="max-width:640px; width:100%;">
+      <h1 style="text-align:center;">¿Con qué espacio quieres continuar?</h1>
+      <p class="small" style="text-align:center; margin-bottom:20px;">Cada espacio muestra únicamente su propio contenido — nunca se combinan.</p>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
+        ${DATA.espacios.map(e=>`
+          <div class="card clickable" style="width:260px;" tabindex="0" role="button"
+               onclick="chooseEspacio('${e.id}')" onkeydown="if(event.key==='Enter')chooseEspacio('${e.id}')">
+            <span class="chip ${e.id==='fam'?'chip-familia':'chip-escuela'}">${e.tipo}</span>
+            <p style="margin-top:10px;">${e.etiqueta}</p>
+          </div>`).join("")}
+      </div>
+    </div>
+  </div>`;
+}
+function chooseEspacio(id){
+  STATE.espacio = id;
+  pushTrace(`Contexto de trabajo activo: ${id==='fam'?'Familia':'Escuela'}.`);
+  goTo("mis-procesos");
+}
+
+// ============================================================
+// PANTALLA 3 — INICIO / MIS PROCESOS
+// ============================================================
+function screenMisProcesos(){
+  const f = STATE.params.filtro || "todos";
+  let procesos = DATA.procesos.slice();
+  if(STATE.espacio==="esc"){
+    // Del lado Escuela, solo se listan Procesos con una Autorización vigente cuyo objeto sea ese Proceso —
+    // nunca todos los Procesos por defecto (Fase 5, Pantalla 3; Fase 6, Principio 2).
+    const objetosAutorizados = new Set(DATA.autorizaciones.filter(a=>a.estado==="vigente").map(a=>a.objeto));
+    procesos = procesos.filter(p=>objetosAutorizados.has("Proceso "+p.id));
+  }
+  if(f==="activo") procesos = procesos.filter(p=>p.estado==="activo");
+  if(f==="cerrado") procesos = procesos.filter(p=>p.estado==="cerrado");
+
+  const cards = procesos.map(p=>`
+    <div class="card clickable" tabindex="0" role="button"
+         onclick="goTo('proceso',{id:'${p.id}', tab:'situacion'})"
+         onkeydown="if(event.key==='Enter')goTo('proceso',{id:'${p.id}', tab:'situacion'})">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+        <h3 style="margin-bottom:4px;">${p.situacion}</h3>
+        <span class="chip ${p.estado==='activo'?'chip-activo':'chip-cerrado'}">${p.estado==='activo'?'Activo':'Cerrado'}</span>
+      </div>
+      <p class="small">${p.espacio} · Creado ${fmt(p.creado)}${p.proximaRevision?` · Próxima revisión ${fmt(p.proximaRevision)}`:""}</p>
+    </div>
+  `).join("") || `<div class="empty-state">${STATE.espacio==="esc" ? "No tienes una Autorización vigente sobre ningún Proceso todavía." : "No hay Procesos con este filtro todavía."}</div>`;
+
+  return `
+    <h1>Mis Procesos</h1>
+    <p class="muted small" style="margin-bottom:16px;">Lista de Procesos a los que tienes acceso vigente. No es posible ordenar ni buscar por nombre de Persona acompañada.</p>
+    ${STATE.espacio==="esc" ? `<div class="banner banner-info">Como Escuela, solo ves los Procesos donde tienes una Autorización vigente — nunca todos los Procesos de la Familia.</div>` : ""}
+    <div class="btn-row" style="margin-bottom:16px;">
+      <button class="tab ${f==='todos'?'active':''}" onclick="goTo('mis-procesos',{filtro:'todos'})">Todos</button>
+      <button class="tab ${f==='activo'?'active':''}" onclick="goTo('mis-procesos',{filtro:'activo'})">Activos</button>
+      <button class="tab ${f==='cerrado'?'active':''}" onclick="goTo('mis-procesos',{filtro:'cerrado'})">Cerrados</button>
+      <span style="flex:1"></span>
+      <button class="btn btn-primary" onclick="abrirCrearProceso()">+ Crear Proceso nuevo</button>
+    </div>
+    ${cards}
+  `;
+}
+
+function abrirCrearProceso(){
+  openModal(`
+    <h2>Crear Proceso</h2>
+    <p class="small muted">Los cuatro elementos son obligatorios. Si falta alguno, el Proceso no puede crearse.</p>
+    <div class="field" id="f-situacion">
+      <label>Situación concreta <span class="req">*</span></label>
+      <textarea id="in-situacion" placeholder="¿Qué está ocurriendo, en concreto?"></textarea>
+      <div class="errtext">Falta describir la situación antes de guardar.</div>
+    </div>
+    <div class="field" id="f-finalidad">
+      <label>Finalidad <span class="req">*</span></label>
+      <textarea id="in-finalidad" placeholder="¿Cuál es el propósito de este acompañamiento?"></textarea>
+      <div class="help">Si resulta muy general, se mostrará una señal para concretarla — no bloquea la creación.</div>
+      <div class="errtext">Falta la finalidad.</div>
+    </div>
+    <div class="field" id="f-pregunta">
+      <label>Pregunta de acompañamiento <span class="req">*</span></label>
+      <textarea id="in-pregunta" placeholder="¿Qué pregunta específica se busca explorar?"></textarea>
+      <div class="errtext">Falta la pregunta de acompañamiento.</div>
+    </div>
+    <div class="field" id="f-contexto">
+      <label>Contexto <span class="req">*</span></label>
+      <textarea id="in-contexto" placeholder="¿Dónde o en qué circunstancia ocurre?"></textarea>
+      <div class="errtext">Falta el contexto.</div>
+    </div>
+    <div class="field">
+      <label>Fecha de próxima revisión</label>
+      <input type="date" id="in-revision" value="${addDays(todayISO(),90)}">
+      <div class="help">Propuesta automática: 3 meses desde hoy.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarProceso()">Crear Proceso</button>
+    </div>
+  `);
+}
+function guardarProceso(){
+  const campos = [["situacion","in-situacion"],["finalidad","in-finalidad"],["pregunta","in-pregunta"],["contexto","in-contexto"]];
+  let ok = true;
+  campos.forEach(([key, id])=>{
+    const val = document.getElementById(id).value.trim();
+    const field = document.getElementById("f-"+key);
+    if(!val){ field.classList.add("err"); ok=false; } else { field.classList.remove("err"); }
+  });
+  if(!ok){ toast("Falta completar campos obligatorios."); return; }
+
+  const finalidad = document.getElementById("in-finalidad").value.trim();
+  const generalidad = finalidad.split(" ").length < 5;
+
+  const id = "P" + (DATA.procesos.length + 1);
+  const nuevo = {
+    id, estado:"activo", espacio: STATE.espacio==="esc"?"Escuela":"Familia",
+    situacion: document.getElementById("in-situacion").value.trim(),
+    finalidad, pregunta: document.getElementById("in-pregunta").value.trim(),
+    contexto: document.getElementById("in-contexto").value.trim(),
+    creado: todayISO(), proximaRevision: document.getElementById("in-revision").value, ampliaciones:0,
+    refPersona:"Proceso vinculado a una Relación (referencia ficticia)"
+  };
+  DATA.procesos.unshift(nuevo);
+  DATA.observaciones[id] = []; DATA.estrategias[id] = []; DATA.aprendizajes[id] = []; DATA.acuerdos[id]=[];
+  pushTrace(`Proceso ${id} creado en estado "activo".`);
+  closeModal();
+  toast("Proceso creado.");
+  if(generalidad){
+    setTimeout(()=>toast("Aviso: esta finalidad podría concretarse más. Puedes continuar así o precisarla."), 400);
+  }
+  goTo("proceso", {id, tab:"situacion"});
+}
+
+// ============================================================
+// PANTALLA 5 — DETALLE DE PROCESO (+ pestañas 6,7,8,9,10,13,17)
+// ============================================================
+function screenDetalleProceso(){
+  const p = currentProceso();
+  if(!p) return `<div class="empty-state">Este Proceso ya no está disponible.</div>`;
+  const tab = STATE.params.tab || "situacion";
+  const tabs = [
+    ["situacion","Situación"], ["observaciones","Observaciones"], ["estrategias","Estrategias"],
+    ["aprendizajes","Aprendizajes"], ["acuerdos","Acuerdos"], ["visualizaciones","Visualizaciones"]
+  ];
+
+  let bodyHtml = "";
+  if(tab==="situacion") bodyHtml = tabSituacion(p);
+  else if(tab==="observaciones") bodyHtml = tabObservaciones(p);
+  else if(tab==="estrategias") bodyHtml = tabEstrategias(p);
+  else if(tab==="aprendizajes") bodyHtml = tabAprendizajes(p);
+  else if(tab==="acuerdos") bodyHtml = tabAcuerdos(p);
+  else if(tab==="visualizaciones") bodyHtml = tabVisualizaciones(p);
+
+  return `
+    ${breadcrumb([{label:"Mis Procesos", screen:"mis-procesos"},{label:p.situacion.slice(0,40)+(p.situacion.length>40?"…":"")}])}
+    <div class="card" style="margin-bottom:18px;">
+      <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+        <div>
+          <h1>${p.situacion}</h1>
+          <p class="small">${p.refPersona}</p>
+        </div>
+        <span class="chip ${p.estado==='activo'?'chip-activo':p.estado==='cerrado'?'chip-cerrado':'chip-pendiente'}">${p.estado==='activo'?'Activo':p.estado==='cerrado'?'Cerrado':'Revisión pendiente'}</span>
+      </div>
+      ${p.estado==='activo'&&p.proximaRevision?`<p class="small">Próxima revisión: ${fmt(p.proximaRevision)}</p>`:""}
+      ${p.estado==='cerrado'?`<div class="banner banner-neutral">Este Proceso está cerrado. Se conserva como información histórica; no admite nuevos registros.</div>`:""}
+      <div class="btn-row">
+        ${p.estado==='activo'?`<button class="btn btn-secondary btn-sm" onclick="abrirAmpliarProceso('${p.id}')">Ampliar Proceso</button>`:""}
+        ${p.estado==='activo'?`<button class="btn btn-secondary btn-sm" onclick="cerrarProceso('${p.id}')">Cerrar Proceso</button>`:""}
+        <button class="btn btn-secondary btn-sm" onclick="abrirExportar('proceso','${p.id}')">Exportar</button>
+      </div>
+    </div>
+    <div class="tabs">
+      ${tabs.map(([k,label])=>`<button class="tab ${tab===k?'active':''}" onclick="goTo('proceso',{id:'${p.id}', tab:'${k}'})">${label}</button>`).join("")}
+    </div>
+    ${bodyHtml}
+  `;
+}
+
+function abrirAmpliarProceso(pid){
+  openModal(`
+    <h2>Ampliar este Proceso</h2>
+    <p class="small muted">Se vincula una nueva Situación complementaria. La Situación fundacional no se modifica.</p>
+    <div class="field"><label>Descripción <span class="req">*</span></label><textarea id="in-amp-desc"></textarea></div>
+    <div class="field"><label>Fecha</label><input type="date" id="in-amp-fecha" value="${todayISO()}"></div>
+    <div class="field"><label>Contexto <span class="req">*</span></label><textarea id="in-amp-ctx"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarAmpliacion('${pid}')">Vincular Situación</button>
+    </div>
+  `);
+}
+function guardarAmpliacion(pid){
+  const desc = document.getElementById("in-amp-desc").value.trim();
+  const ctx = document.getElementById("in-amp-ctx").value.trim();
+  if(!desc || !ctx){ toast("La descripción y el contexto son obligatorios."); return; }
+  DATA.situacionesAmpliacion[pid] = DATA.situacionesAmpliacion[pid] || [];
+  DATA.situacionesAmpliacion[pid].push({fecha:document.getElementById("in-amp-fecha").value, descripcion:desc, contexto:ctx});
+  const p = DATA.procesos.find(x=>x.id===pid); p.ampliaciones++;
+  pushTrace(`Situación de ampliación vinculada al Proceso ${pid}.`);
+  closeModal(); toast("Situación vinculada.");
+  render();
+}
+function cerrarProceso(pid){
+  confirmModal({
+    title:"Cerrar este Proceso",
+    body:"El Proceso pasará a estado \"cerrado\". El contenido no se elimina; queda conservado como información histórica.",
+    confirmLabel:"Cerrar Proceso",
+    onConfirm: ()=>{
+      const p = DATA.procesos.find(x=>x.id===pid); p.estado="cerrado"; p.cerrado = todayISO(); p.proximaRevision=null;
+      pushTrace(`Proceso ${pid} cerrado.`);
+      toast("Proceso cerrado. El contenido se conserva como información histórica.");
+      render();
+    }
+  });
+}
+
+// ---- Tab: Situación ----
+function tabSituacion(p){
+  const amps = DATA.situacionesAmpliacion[p.id] || [];
+  return `
+    <div class="card">
+      <span class="small" style="text-transform:uppercase; letter-spacing:.04em; color:var(--gris-500);">Situación fundacional · no editable</span>
+      <p>${p.situacion}</p>
+      <div class="dl">
+        <dt>Fecha</dt><dd>${fmt(p.creado)}</dd>
+        <dt>Contexto</dt><dd>${p.contexto}</dd>
+        <dt>Finalidad</dt><dd>${p.finalidad}</dd>
+        <dt>Pregunta</dt><dd>${p.pregunta}</dd>
+      </div>
+    </div>
+    ${amps.map(a=>`
+      <div class="card dim">
+        <span class="small" style="text-transform:uppercase; letter-spacing:.04em;">Ampliación · ${fmt(a.fecha)}</span>
+        <p>${a.descripcion}</p>
+        <p class="small">Contexto: ${a.contexto}</p>
+      </div>`).join("") || `<p class="muted small">No hay Situaciones de ampliación todavía.</p>`}
+  `;
+}
+
+// ---- Tab: Observaciones ----
+function tabObservaciones(p){
+  const obs = DATA.observaciones[p.id] || [];
+  const grupos = {}; obs.forEach(o=>{ (grupos["Situación fundacional"]=grupos["Situación fundacional"]||[]).push(o); });
+  const puedeRegistrar = p.estado==="activo";
+  return `
+    <div class="btn-row" style="margin-bottom:12px;">
+      ${puedeRegistrar
+        ? `<button class="btn btn-primary btn-sm" onclick="abrirRegistrarObservacion('${p.id}')">Registrar Observación</button>`
+        : `<span class="small muted">Este Proceso no admite nuevos registros (${p.estado}).</span>`}
+    </div>
+    ${Object.entries(grupos).map(([g,items])=>`
+      <div class="section-label">${g}</div>
+      ${items.map(o=>`
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; gap:8px;">
+            <span class="chip ${o.perspectiva==='Familia'?'chip-familia':'chip-escuela'}">${o.perspectiva}</span>
+            <span class="small">${fmt(o.fecha)}</span>
+          </div>
+          <p style="margin-top:8px;">${o.descripcion}</p>
+          <div class="btn-row"><button class="btn btn-text btn-sm" onclick="abrirCompartir('Observación','${o.id}')">Compartir</button></div>
+        </div>`).join("")}
+    `).join("") || `<div class="empty-state">Aún no hay Observaciones en este Proceso.</div>`}
+  `;
+}
+function abrirRegistrarObservacion(pid){
+  openModal(`
+    <h2>Registrar Observación</h2>
+    <div class="field" id="f-obs"><label>Descripción de lo ocurrido <span class="req">*</span></label><textarea id="in-obs"></textarea><div class="errtext">Falta describir la situación antes de guardar.</div></div>
+    <div class="field"><label>Fecha</label><input type="date" id="in-obs-fecha" value="${todayISO()}"></div>
+    <p class="small muted">Perspectiva de origen: <b>${STATE.espacio==='esc'?'Escuela':'Familia'}</b> (asignada automáticamente).</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarObservacion('${pid}')">Guardar</button>
+    </div>
+  `);
+}
+function guardarObservacion(pid){
+  const desc = document.getElementById("in-obs").value.trim();
+  if(!desc){ document.getElementById("f-obs").classList.add("err"); return; }
+  const id = "O" + (Math.floor(Math.random()*9000)+1000);
+  DATA.observaciones[pid] = DATA.observaciones[pid] || [];
+  DATA.observaciones[pid].unshift({id, fecha:document.getElementById("in-obs-fecha").value, perspectiva: STATE.espacio==='esc'?'Escuela':'Familia', descripcion:desc});
+  pushTrace(`Observación registrada en Proceso ${pid}.`);
+  closeModal(); toast("Observación guardada.");
+  render();
+}
+
+// ---- Tab: Estrategias (+ Resultados anidados) ----
+const ESTADO_ESTR_CLASS = {
+  "Por explorar":"chip-estr-explorar", "En exploración":"chip-estr-exploracion", "Con resultados observados":"chip-estr-resultados",
+  "Requiere ajustes":"chip-estr-ajustes", "En pausa":"chip-estr-pausa", "Cerrada":"chip-estr-cerrada"
+};
+function tabEstrategias(p){
+  const ests = DATA.estrategias[p.id] || [];
+  const abiertaId = STATE.params.estrategiaAbierta;
+  return `
+    <div class="btn-row" style="margin-bottom:12px;">
+      <button class="btn btn-primary btn-sm" onclick="abrirProponerEstrategia('${p.id}')">Proponer Estrategia</button>
+    </div>
+    ${ests.map(e=>`
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; gap:8px;">
+          <h3>${e.descripcion}</h3>
+          <span class="chip ${ESTADO_ESTR_CLASS[e.estado]}">${e.estado}</span>
+        </div>
+        <p class="small">Origen: ${e.origen}${e.notaOrigen?` · ${e.notaOrigen}`:""}</p>
+        <div class="btn-row">
+          ${e.estado==="Por explorar"?`<button class="btn btn-secondary btn-sm" onclick="cambiarEstadoEstrategia('${e.id}','En exploración')">Explorar</button>`:""}
+          ${e.estado==="En exploración"?`<button class="btn btn-secondary btn-sm" onclick="abrirRegistrarResultado('${p.id}','${e.id}')">Registrar Resultado</button>
+                                          <button class="btn btn-text btn-sm" onclick="cambiarEstadoEstrategia('${e.id}','Requiere ajustes')">Marcar \"Requiere ajustes\"</button>
+                                          <button class="btn btn-text btn-sm" onclick="cambiarEstadoEstrategia('${e.id}','En pausa')">Pausar</button>`:""}
+          ${e.estado==="Requiere ajustes"?`<button class="btn btn-secondary btn-sm" onclick="abrirRegistrarResultado('${p.id}','${e.id}')">Registrar Resultado</button>`:""}
+          ${(e.estado!=="Cerrada")?`<button class="btn btn-text btn-sm" onclick="cambiarEstadoEstrategia('${e.id}','Cerrada')">Cerrar</button>`:`<button class="btn btn-text btn-sm" onclick="reexplorarEstrategia('${p.id}','${e.id}')">Reexplorar en otro Proceso</button>`}
+          <button class="btn btn-text btn-sm" onclick="goTo('proceso',{id:'${p.id}', tab:'estrategias', estrategiaAbierta: '${abiertaId===e.id?'':e.id}'})">${abiertaId===e.id?'Ocultar resultados':'Ver Resultados'}</button>
+        </div>
+        ${abiertaId===e.id ? tabResultados(e.id) : ""}
+      </div>`).join("") || `<div class="empty-state">Aún no hay Estrategias en este Proceso.</div>`}
+  `;
+}
+function abrirProponerEstrategia(pid){
+  openModal(`
+    <h2>Proponer Estrategia</h2>
+    <p class="small muted">Se presenta como una alternativa entre varias, nunca como recomendación única.</p>
+    <div class="field" id="f-estr"><label>Descripción <span class="req">*</span></label><textarea id="in-estr"></textarea><div class="errtext">Falta vincular esta Estrategia a una descripción.</div></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarEstrategia('${pid}')">Guardar</button>
+    </div>
+  `);
+}
+function guardarEstrategia(pid){
+  const desc = document.getElementById("in-estr").value.trim();
+  if(!desc){ document.getElementById("f-estr").classList.add("err"); return; }
+  const id = "E" + (Math.floor(Math.random()*9000)+1000);
+  DATA.estrategias[pid] = DATA.estrategias[pid] || [];
+  DATA.estrategias[pid].unshift({id, descripcion:desc, estado:"Por explorar", origen: STATE.espacio==='esc'?'Escuela':'Familia'});
+  pushTrace(`Estrategia propuesta en Proceso ${pid}.`);
+  closeModal(); toast("Estrategia guardada.");
+  render();
+}
+function findEstrategia(id){ for(const k in DATA.estrategias){ const f=DATA.estrategias[k].find(e=>e.id===id); if(f) return f; } return null; }
+function cambiarEstadoEstrategia(id, nuevo){
+  const e = findEstrategia(id); if(!e) return;
+  e.estado = nuevo;
+  pushTrace(`Estrategia ${id} cambió a estado "${nuevo}".`);
+  toast("Estado actualizado.");
+  render();
+}
+function reexplorarEstrategia(pidOrigen, estId){
+  const e = findEstrategia(estId);
+  const destino = DATA.procesos.find(x=>x.id!==pidOrigen && x.estado==="activo") || currentProceso();
+  const nuevoId = "E" + (Math.floor(Math.random()*9000)+1000);
+  DATA.estrategias[destino.id] = DATA.estrategias[destino.id] || [];
+  DATA.estrategias[destino.id].unshift({id:nuevoId, descripcion:e.descripcion, estado:"Por explorar", origen:e.origen, notaOrigen:"Basada en una Estrategia explorada antes en otro Proceso"});
+  pushTrace(`Estrategia reexplorada como ${nuevoId} en Proceso ${destino.id}; el estado histórico de ${estId} no se modifica.`);
+  toast(`Nueva exploración creada en "${destino.situacion.slice(0,30)}…".`);
+  goTo("proceso", {id:destino.id, tab:"estrategias"});
+}
+
+// ---- Resultados (embebidos en Estrategia) ----
+function tabResultados(estId){
+  const res = DATA.resultados[estId] || [];
+  return `
+    <div style="border-top:1px solid var(--gris-100); margin-top:10px; padding-top:10px;">
+      <div class="section-label">Resultados de esta Estrategia</div>
+      ${res.map(r=>`<div class="small" style="margin-bottom:6px;"><b>${fmt(r.fecha)}</b> — ${r.descripcion}</div>`).join("") || `<p class="small muted">Aún no hay Resultados registrados.</p>`}
+    </div>`;
+}
+function abrirRegistrarResultado(pid, estId){
+  openModal(`
+    <h2>Registrar Resultado</h2>
+    <div class="field" id="f-res"><label>Descripción de lo observado <span class="req">*</span></label><textarea id="in-res"></textarea><div class="errtext">Falta vincular este Resultado a una Estrategia.</div></div>
+    <div class="field"><label>Fecha</label><input type="date" id="in-res-fecha" value="${todayISO()}"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarResultado('${pid}','${estId}')">Guardar</button>
+    </div>
+  `);
+}
+function guardarResultado(pid, estId){
+  const desc = document.getElementById("in-res").value.trim();
+  if(!desc){ document.getElementById("f-res").classList.add("err"); return; }
+  DATA.resultados[estId] = DATA.resultados[estId] || [];
+  DATA.resultados[estId].unshift({fecha:document.getElementById("in-res-fecha").value, descripcion:desc});
+  const e = findEstrategia(estId); if(e && e.estado==="En exploración") e.estado="Con resultados observados";
+  pushTrace(`Resultado registrado para la Estrategia ${estId}.`);
+  closeModal(); toast("Resultado guardado.");
+  goTo("proceso", {id:pid, tab:"estrategias", estrategiaAbierta:estId});
+}
+
+// ---- Tab: Aprendizajes ----
+const ESTADO_APR_CLASS = {
+  "Propuesto":"chip-aprendizaje-propuesto", "En construcción":"chip-aprendizaje-construccion",
+  "Sustentado contextualmente":"chip-aprendizaje-sustentado", "En revisión":"chip-aprendizaje-revision", "Cerrado":"chip-aprendizaje-cerrado"
+};
+const ORDEN_APR = ["Propuesto","En construcción","Sustentado contextualmente","En revisión","Cerrado"];
+function tabAprendizajes(p){
+  const aprs = DATA.aprendizajes[p.id] || [];
+  return `
+    <div class="banner banner-neutral">Ningún estado de Aprendizaje es un diagnóstico ni una valoración de la persona: describe únicamente el sustento disponible dentro de este Proceso.</div>
+    <div class="btn-row" style="margin-bottom:12px;">
+      <button class="btn btn-primary btn-sm" onclick="abrirProponerAprendizaje('${p.id}')">Proponer Aprendizaje</button>
+    </div>
+    ${aprs.map(a=>`
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; gap:8px;">
+          <h3>${a.descripcion}</h3>
+          <span class="chip ${ESTADO_APR_CLASS[a.estado]}" title="Este estado no es un diagnóstico.">${a.estado}</span>
+        </div>
+        <p class="small">Evidencia vinculada: ${a.evidencia.join(", ")}${a.ia?` · <span title="Propuesta con asistencia de IA, confirmada por ${a.iaConfirmadoPor}">asistido por IA, confirmado por humano</span>`:""}</p>
+        <div class="btn-row">
+          ${a.estado!=="Cerrado" ? `<button class="btn btn-secondary btn-sm" onclick="avanzarAprendizaje('${a.id}')">Avanzar estado</button>` : ""}
+          ${a.estado!=="Cerrado" ? `<button class="btn btn-text btn-sm" onclick="cerrarAprendizaje('${a.id}')">Cerrar</button>` : `<button class="btn btn-text btn-sm" onclick="reconsiderarAprendizaje('${p.id}','${a.id}')">Reconsiderar en un nuevo Proceso</button>`}
+          <button class="btn btn-text btn-sm" onclick="abrirCompartir('Aprendizaje','${a.id}')">Compartir</button>
+        </div>
+      </div>`).join("") || `<div class="empty-state">Aún no hay Aprendizajes propuestos en este Proceso.</div>`}
+  `;
+}
+function abrirProponerAprendizaje(pid){
+  const obs = (DATA.observaciones[pid]||[]).concat();
+  openModal(`
+    <h2>Proponer Aprendizaje</h2>
+    <div class="field" id="f-apr"><label>Descripción <span class="req">*</span></label><textarea id="in-apr"></textarea><div class="errtext">Falta la descripción.</div></div>
+    <div class="field" id="f-apr-ev">
+      <label>Evidencia vinculada (al menos una) <span class="req">*</span></label>
+      <select id="in-apr-ev">
+        <option value="">Selecciona una Observación de este Proceso</option>
+        ${obs.map(o=>`<option value="${o.id}">${o.id} — ${o.descripcion.slice(0,50)}…</option>`).join("")}
+      </select>
+      <div class="errtext">Este Aprendizaje necesita al menos una Observación o Resultado como evidencia.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarAprendizaje('${pid}')">Guardar como "Propuesto"</button>
+    </div>
+  `);
+}
+function guardarAprendizaje(pid){
+  const desc = document.getElementById("in-apr").value.trim();
+  const ev = document.getElementById("in-apr-ev").value;
+  let ok = true;
+  if(!desc){ document.getElementById("f-apr").classList.add("err"); ok=false; } else document.getElementById("f-apr").classList.remove("err");
+  if(!ev){ document.getElementById("f-apr-ev").classList.add("err"); ok=false; } else document.getElementById("f-apr-ev").classList.remove("err");
+  if(!ok) return;
+  const id = "L" + (Math.floor(Math.random()*9000)+1000);
+  DATA.aprendizajes[pid] = DATA.aprendizajes[pid] || [];
+  DATA.aprendizajes[pid].unshift({id, descripcion:desc, estado:"Propuesto", evidencia:[ev], ia:false});
+  pushTrace(`Aprendizaje ${id} propuesto en Proceso ${pid}, en estado "Propuesto".`);
+  closeModal(); toast("Aprendizaje guardado.");
+  render();
+}
+function findAprendizaje(id){ for(const k in DATA.aprendizajes){ const f=DATA.aprendizajes[k].find(a=>a.id===id); if(f) return [f,k]; } return [null,null]; }
+function avanzarAprendizaje(id){
+  const [a] = findAprendizaje(id); if(!a) return;
+  const i = ORDEN_APR.indexOf(a.estado);
+  if(a.evidencia.length===0){ toast("Este Aprendizaje necesita evidencia antes de avanzar de estado."); return; }
+  a.estado = ORDEN_APR[Math.min(i+1, ORDEN_APR.length-2)]; // avanza sin saltar directo a "Cerrado" desde el botón de avance
+  pushTrace(`Aprendizaje ${id} avanzó a "${a.estado}" (confirmación humana).`);
+  toast("Estado actualizado.");
+  render();
+}
+function cerrarAprendizaje(id){
+  const [a] = findAprendizaje(id); if(!a) return;
+  a.estado = "Cerrado";
+  pushTrace(`Aprendizaje ${id} cerrado. No implica que haya sido falso.`);
+  toast("Aprendizaje cerrado.");
+  render();
+}
+function reconsiderarAprendizaje(pidOrigen, aprId){
+  const [a] = findAprendizaje(aprId);
+  const destino = DATA.procesos.find(x=>x.estado==="activo") || currentProceso();
+  const nuevoId = "L" + (Math.floor(Math.random()*9000)+1000);
+  DATA.aprendizajes[destino.id] = DATA.aprendizajes[destino.id] || [];
+  DATA.aprendizajes[destino.id].unshift({id:nuevoId, descripcion:a.descripcion + " (reconsiderado)", estado:"Propuesto", evidencia:[], ia:false});
+  pushTrace(`Aprendizaje reconsiderado como ${nuevoId} en Proceso ${destino.id}, en estado "Propuesto"; no reactiva ni traslada el estado de ${aprId}.`);
+  toast("Nueva propuesta creada a partir del Aprendizaje cerrado.");
+  goTo("proceso", {id:destino.id, tab:"aprendizajes"});
+}
+
+// ---- Tab: Acuerdos ----
+function tabAcuerdos(p){
+  const ags = DATA.acuerdos[p.id] || [];
+  return `
+    <div class="btn-row" style="margin-bottom:12px;"><button class="btn btn-primary btn-sm" onclick="toast('Prototipo: formulario de Acuerdo equivalente al de Estrategia/Aprendizaje ya demostrado.')">Proponer Acuerdo</button></div>
+    ${ags.map(a=>`
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; gap:8px;">
+          <p style="margin:0;">${a.contenido}</p>
+          <span class="chip chip-activo">${a.estado}</span>
+        </div>
+        <div class="section-label">Seguimiento</div>
+        ${a.seguimientos.map(s=>`<div class="small">${fmt(s.fecha)} — ${s.descripcion}</div>`).join("") || `<p class="small muted">Sin seguimientos todavía.</p>`}
+        <div class="btn-row">
+          <button class="btn btn-text btn-sm" onclick="solicitarCancelacionAcuerdo('${a.id}')">Solicitar cancelación</button>
+        </div>
+      </div>`).join("") || `<div class="empty-state">Aún no hay Acuerdos en este Proceso.</div>`}
+  `;
+}
+function solicitarCancelacionAcuerdo(id){
+  confirmModal({
+    title:"Solicitar cancelación del Acuerdo",
+    body:"Esto no elimina el Acuerdo ni su historial. Queda registrada la solicitud; la otra parte debe resolverla.",
+    confirmLabel:"Solicitar cancelación",
+    onConfirm:()=>{ pushTrace(`Solicitud de cancelación registrada para el Acuerdo ${id}.`); toast("Cancelación solicitada."); }
+  });
+}
+
+// ---- Tab: Visualizaciones ----
+function tabVisualizaciones(p){
+  const obsCount = (DATA.observaciones[p.id]||[]).length;
+  const ests = DATA.estrategias[p.id]||[];
+  const ags = DATA.acuerdos[p.id]||[];
+  return `
+    <div class="card">
+      <span class="small" style="text-transform:uppercase; color:var(--gris-500);">Secuencia de este Proceso</span>
+      <p class="small muted">Contexto de origen: ${p.situacion.slice(0,50)}…</p>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+        <span class="chip chip-familia">Situación (${1+(DATA.situacionesAmpliacion[p.id]||[]).length})</span>
+        <span class="chip chip-escuela">Observaciones (${obsCount})</span>
+        <span class="chip chip-activo">Estrategias (${ests.length})</span>
+        <span class="chip chip-pendiente">Aprendizajes (${(DATA.aprendizajes[p.id]||[]).length})</span>
+      </div>
+    </div>
+    <div class="card">
+      <span class="small" style="text-transform:uppercase; color:var(--gris-500);">Conteos contextualizados — solo de este Proceso</span>
+      <p>${obsCount} Observaciones registradas en <b>este Proceso</b> desde su creación (${fmt(p.creado)}).</p>
+    </div>
+    ${ags.length ? `<div class="card">
+      <span class="small" style="text-transform:uppercase; color:var(--gris-500);">Acuerdos y su seguimiento — este Proceso</span>
+      ${ags.map(a=>`<p class="small">${a.contenido.slice(0,60)}… — ${a.seguimientos.length} seguimiento(s)</p>`).join("")}
+    </div>`:""}
+    <p class="small muted">Ninguna visualización combina datos de otro Proceso. No existen aquí perfil global, ranking, puntuación ni tendencia.</p>
+  `;
+}
+
+// ============================================================
+// PANTALLA 14 — PUENTE FAMILIA-ESCUELA
+// ============================================================
+function screenPuente(){
+  return `
+    <h1>Puente Familia-Escuela</h1>
+    <div class="banner banner-info">Una conexión no da acceso a todo el contenido — solo a los elementos específicos que se comparten dentro de ella.</div>
+    <div class="btn-row" style="margin-bottom:14px;">
+      <button class="btn btn-primary" onclick="abrirSolicitarConexion()">Solicitar conexión</button>
+    </div>
+    ${DATA.conexiones.map(c=>`
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; gap:8px;">
+          <h3>${c.familiaLabel} ↔ ${c.escuelaLabel}</h3>
+          <span class="chip ${c.estado==='Activa'?'chip-activo':'chip-pendiente'}">${c.estado}</span>
+        </div>
+        <div class="section-label">Elementos compartidos dentro de esta Conexión</div>
+        ${c.elementos.map(el=>`<div class="small">· ${el.tipo}: ${el.resumen}</div>`).join("") || `<p class="small muted">Ningún elemento compartido todavía.</p>`}
+        <div class="btn-row">
+          <button class="btn btn-danger btn-sm" onclick="revocarConexion('${c.id}')">Revocar Conexión</button>
+        </div>
+      </div>
+    `).join("")}
+  `;
+}
+function abrirSolicitarConexion(){
+  openModal(`
+    <h2>Solicitar conexión</h2>
+    <div class="field"><label>Finalidad inicial <span class="req">*</span></label><textarea id="in-con-fin" placeholder="Ej. colaborar en el seguimiento de un Proceso"></textarea></div>
+    <p class="small muted">Del lado Escuela se requiere una cuenta institucional verificable (@aefcm.gob.mx o @docente.aefcm.gob.mx). El dominio, por sí solo, no concede acceso al contenido.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="enviarSolicitudConexion()">Enviar solicitud</button>
+    </div>
+  `);
+}
+function enviarSolicitudConexion(){
+  pushTrace("Solicitud de conexión enviada (simulada); sin permisos creados todavía.");
+  closeModal(); toast("Solicitud enviada.");
+}
+function revocarConexion(id){
+  confirmModal({
+    title:"Revocar esta Conexión",
+    body:"El acceso futuro se cierra. No podemos garantizar que se elimine una copia que la otra parte ya haya visto o guardado.",
+    warn:"Esto cierra el acceso futuro, no borra copias ya salidas de la aplicación.",
+    danger:true, confirmLabel:"Revocar Conexión",
+    onConfirm:()=>{
+      const c = DATA.conexiones.find(x=>x.id===id); if(c) c.estado="Revocada";
+      pushTrace(`Conexión ${id} revocada.`);
+      toast("Conexión revocada.");
+      render();
+    }
+  });
+}
+
+// ============================================================
+// PANTALLA 15 — COMPARTIR UN ELEMENTO (modal transversal)
+// ============================================================
+function abrirCompartir(tipo, refId){
+  let resumen = "";
+  if(tipo==="Observación"){ for(const k in DATA.observaciones){ const f=DATA.observaciones[k].find(o=>o.id===refId); if(f){ resumen=f.descripcion; break; } } }
+  else if(tipo==="Aprendizaje"){ const [a]=findAprendizaje(refId); if(a) resumen=a.descripcion; }
+  resumen = resumen.slice(0,80) + (resumen.length>80?"…":"");
+  const conexionesActivas = DATA.conexiones.filter(c=>c.estado==="Activa");
+  openModal(`
+    <h2>Compartir ${tipo}</h2>
+    <p class="small muted">${escapeHtml(resumen)}</p>
+    <div class="field">
+      <label>Conexión destinataria <span class="req">*</span></label>
+      <select id="in-compartir-con">
+        ${conexionesActivas.length ? conexionesActivas.map(c=>`<option value="${c.id}">${c.familiaLabel} ↔ ${c.escuelaLabel}</option>`).join("") : `<option value="">No tienes una Conexión activa</option>`}
+      </select>
+    </div>
+    <div class="warn-box">Quien reciba esto no podrá reenviarlo a otra persona sin una nueva autorización propia.</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" ${conexionesActivas.length?"":"disabled"} onclick="confirmarCompartir('${tipo}','${refId}')">Confirmar compartición</button>
+    </div>
+  `);
+}
+function confirmarCompartir(tipo, refId){
+  pushTrace(`${tipo} ${refId} compartido vía el Puente. La compartición no habilita a la otra parte a reenviarlo.`);
+  closeModal();
+  toast(`${tipo} compartido.`);
+}
+
+// ============================================================
+// PANTALLA 16 — AUTORIZACIONES
+// ============================================================
+function vigenciaInfo(a){
+  const vence = addDays(a.inicio, a.vigenciaDias);
+  const restantes = daysBetween(todayISO(), vence);
+  let cls = "ok", label = `Vence en ${restantes} días (${fmt(vence)})`;
+  if(a.estado==="revocada"){ cls="vencida"; label = `Revocada el ${fmt(a.revocadaEl)}`; }
+  else if(restantes<=0){ cls="vencida"; label = `Vencida el ${fmt(vence)}`; }
+  else if(restantes<=15){ cls="pronto"; label = `Vence en ${restantes} días (${fmt(vence)})`; }
+  const total = a.vigenciaDias;
+  const transcurridos = Math.min(total, daysBetween(a.inicio, todayISO()));
+  const pct = a.estado==="revocada" ? 100 : Math.min(100, Math.round((transcurridos/total)*100));
+  return {cls, label, pct, vence};
+}
+function screenAutorizaciones(){
+  const otorgadas = DATA.autorizaciones;
+  return `
+    <h1>Autorizaciones</h1>
+    <div class="btn-row" style="margin-bottom:14px;">
+      <button class="btn btn-primary" onclick="abrirOtorgarAutorizacion()">Otorgar Autorización</button>
+      <button class="btn btn-secondary" onclick="abrirSolicitarConsolidacion()">Solicitar Autorización de consolidación</button>
+    </div>
+    ${otorgadas.map(a=>{
+      const v = vigenciaInfo(a);
+      return `
+      <div class="card">
+        <div class="dl">
+          <dt>Otorgante</dt><dd>${a.otorgante}</dd>
+          <dt>Receptor</dt><dd>${a.receptor}</dd>
+          <dt>Objeto</dt><dd>${a.objeto}</dd>
+          <dt>Finalidad</dt><dd>${a.finalidad}</dd>
+        </div>
+        <div class="vigencia ${v.cls}">
+          <div class="bar"><div class="bar-fill" style="width:${v.pct}%"></div></div>
+          <div class="vigencia-text">${v.label}</div>
+        </div>
+        <div class="btn-row">
+          ${a.estado!=="revocada" ? `<button class="btn btn-secondary btn-sm" onclick="renovarAutorizacion('${a.id}')">Renovar</button>
+                                       <button class="btn btn-danger btn-sm" onclick="revocarAutorizacion('${a.id}')">Revocar</button>` : `<span class="small muted">Revocada por ${a.revocadaPor}</span>`}
+        </div>
+      </div>`;
+    }).join("")}
+  `;
+}
+function abrirOtorgarAutorizacion(){
+  openModal(`
+    <h2>Otorgar Autorización</h2>
+    <div class="field">
+      <label>Receptor específico <span class="req">*</span></label>
+      <input type="text" id="in-aut-receptor" placeholder="Buscar persona verificada (nunca un rol o cargo)" value="Prof. Ana López (docente.demo@docente.aefcm.gob.mx)">
+      <div class="help">El campo admite únicamente una persona específica, verificada — nunca un rol o cargo genérico.</div>
+    </div>
+    <div class="field"><label>Objeto (único) <span class="req">*</span></label>
+      <select id="in-aut-objeto">${DATA.procesos.map(p=>`<option value="${p.id}">Proceso: ${p.situacion.slice(0,40)}…</option>`).join("")}</select>
+    </div>
+    <div class="field"><label>Finalidad <span class="req">*</span></label><textarea id="in-aut-fin"></textarea></div>
+    <div class="field"><label>Vigencia</label><input type="text" value="3 meses (predeterminado) — vence el ${addDays(todayISO(),90)}" disabled></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarAutorizacion()">Otorgar Autorización</button>
+    </div>
+  `);
+}
+function guardarAutorizacion(){
+  const receptor = document.getElementById("in-aut-receptor").value.trim();
+  const fin = document.getElementById("in-aut-fin").value.trim();
+  if(!receptor || !fin){ toast("Faltan campos obligatorios."); return; }
+  const objeto = document.getElementById("in-aut-objeto").value;
+  const id = "A" + (DATA.autorizaciones.length+1);
+  DATA.autorizaciones.unshift({id, tipo:"ordinaria", otorgante:"Familia (ficticia)", receptor, objeto:"Proceso "+objeto, finalidad:fin, inicio:todayISO(), vigenciaDias:90, estado:"vigente"});
+  pushTrace(`Autorización ${id} otorgada; vigente por 3 meses. Registro de trazabilidad de 10 campos creado.`);
+  closeModal(); toast("Autorización otorgada.");
+  render();
+}
+function renovarAutorizacion(id){
+  const a = DATA.autorizaciones.find(x=>x.id===id);
+  a.inicio = todayISO();
+  pushTrace(`Autorización ${id} renovada mediante acción humana explícita.`);
+  toast("Autorización renovada.");
+  render();
+}
+function revocarAutorizacion(id){
+  confirmModal({
+    title:"Revocar esta Autorización",
+    body:"El acceso futuro se cierra de inmediato.",
+    warn:"No podemos garantizar la eliminación de una copia que la otra parte ya haya visto o guardado.",
+    danger:true, confirmLabel:"Revocar",
+    onConfirm:()=>{
+      const a = DATA.autorizaciones.find(x=>x.id===id); a.estado="revocada"; a.revocadaEl=todayISO(); a.revocadaPor="Familia (ficticia)";
+      pushTrace(`Autorización ${id} revocada.`);
+      toast("Autorización revocada. El acceso futuro queda cerrado.");
+      render();
+    }
+  });
+}
+function abrirSolicitarConsolidacion(){
+  openModal(`
+    <h2>Solicitar Autorización de consolidación</h2>
+    <div class="banner banner-warn">Excepcional, específica y temporal — nunca un mecanismo de uso habitual.</div>
+    <div class="field"><label>Procesos concretos <span class="req">*</span></label>
+      ${DATA.procesos.map(p=>`<div><input type="checkbox" id="chk-${p.id}"> <label for="chk-${p.id}" style="display:inline; font-weight:400;">${p.situacion.slice(0,50)}…</label></div>`).join("")}
+    </div>
+    <div class="field"><label>Persona institucional facultada <span class="req">*</span></label>
+      <input type="text" placeholder="Persona específica, previamente facultada" value="Prof. Ana López (docente.demo@docente.aefcm.gob.mx)">
+    </div>
+    <div class="field"><label>Finalidad <span class="req">*</span></label><textarea placeholder="Ej. evaluación psicopedagógica formal solicitada por la Familia"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="pushTrace('Autorización de consolidación otorgada (simulada), vigencia corta.'); closeModal(); toast('Autorización de consolidación otorgada.');">Confirmar (con consentimiento de Familia)</button>
+    </div>
+  `);
+}
+
+// ============================================================
+// PANTALLA 19 — EXPORTACIÓN
+// ============================================================
+function escapeHtml(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+function abrirExportar(tipo, id){
+  let nombreObjeto = "";
+  if(tipo==="proceso"){ const p = DATA.procesos.find(x=>x.id===id); nombreObjeto = "Proceso: " + p.situacion.slice(0,50); }
+  window._exportObjName = nombreObjeto;
+  openModal(`
+    <h2>Exportar</h2>
+    <p><b>${escapeHtml(nombreObjeto)}</b></p>
+    <p class="small muted">Solo se exporta este objeto. No existe una opción de "exportar todo lo de esta persona".</p>
+    <div class="warn-box">Esta acción queda registrada en trazabilidad. Una vez descargado el contenido, no podemos garantizar la eliminación de copias fuera de Conociéndonos.</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarExportar()">Confirmar exportación</button>
+    </div>
+  `);
+}
+function confirmarExportar(){
+  pushTrace(`Exportación generada para: ${window._exportObjName}. Registrada en trazabilidad.`);
+  closeModal();
+  toast("Exportación generada. Esta acción quedó registrada.");
+}
+
+// ============================================================
+// PANTALLA 20 — NOTIFICACIONES
+// ============================================================
+function screenNotificaciones(){
+  return `
+    <h1>Notificaciones</h1>
+    <div class="btn-row" style="margin-bottom:12px;"><button class="btn btn-text btn-sm" onclick="marcarTodasLeidas()">Marcar todas como leídas</button></div>
+    ${DATA.notificaciones.map(n=>`
+      <div class="card clickable" tabindex="0" role="button" onclick="abrirNotificacion('${n.id}')" onkeydown="if(event.key==='Enter')abrirNotificacion('${n.id}')" style="${n.leida?'':'border-left:3px solid var(--azul);'}">
+        <div style="display:flex; justify-content:space-between; gap:8px;">
+          <b>${n.tipo}</b><span class="small">${fmt(n.fecha)}</span>
+        </div>
+        <p style="margin:4px 0 0;">${n.texto}</p>
+      </div>
+    `).join("")}
+    <p class="small muted" style="margin-top:10px;">Catálogo cerrado de notificaciones — no existen notificaciones de riesgo, clasificación ni conclusiones diagnósticas de IA.</p>
+  `;
+}
+function marcarTodasLeidas(){ DATA.notificaciones.forEach(n=>n.leida=true); render(); }
+function abrirNotificacion(id){
+  const n = DATA.notificaciones.find(x=>x.id===id);
+  n.leida = true;
+  pushTrace(`Notificación ${id} abierta.`);
+  if(n.destino.screen==="proceso") goTo("proceso", n.destino.params);
+  else goTo(n.destino.screen);
+}
+
+// ============================================================
+// PANTALLA 22 — IDENTIDAD, RELACIONES Y SESIÓN
+// ============================================================
+function screenSesion(){
+  return `
+    <h1>Mi cuenta</h1>
+    <div class="card">
+      <h3>Datos propios</h3>
+      <div class="dl">
+        <dt>Nombre</dt><dd>Usuario Demostrativo (ficticio)</dd>
+        <dt>Correo</dt><dd>${STATE.espacio==='esc'?DATA.usuario.correoEsc:DATA.usuario.correoFam}</dd>
+        <dt>Espacio activo</dt><dd>${STATE.espacio==='esc'?'Escuela':'Familia'} <a href="#" onclick="event.preventDefault(); goTo('seleccion-contexto')">(cambiar)</a></dd>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Sesión</h3>
+      <p class="small">Sesión iniciada: ${STATE.sesion.inicioSesion || "—"}. <b>Sesión abierta ≠ autorización vigente</b>: cada acción sigue comprobando el permiso correspondiente en el momento de ejecutarse.</p>
+      <div class="btn-row">
+        <button class="btn btn-secondary btn-sm" onclick="reautenticar()">Reautenticarse</button>
+        <button class="btn btn-secondary btn-sm" onclick="simularInactividad()">Simular cierre por inactividad</button>
+        <button class="btn btn-danger btn-sm" onclick="cerrarSesion()">Cerrar sesión</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Panel de trazabilidad del prototipo</h3>
+      <p class="small muted">Registro simulado de las acciones realizadas en esta sesión, con fines de demostración (no es la pantalla de Auditoría de la Fase 5, es un panel de apoyo para esta iteración).</p>
+      <div class="trace-panel">
+        ${STATE.trace.map(t=>`<div class="ln">${t.t} — ${t.msg}</div>`).join("") || "<div class='ln'>Sin actividad registrada todavía.</div>"}
+      </div>
+    </div>
+  `;
+}
+function reautenticar(){
+  confirmModal({
+    title:"Reautenticación requerida",
+    body:"Esta operación es especialmente sensible. Confirma tu identidad para continuar.",
+    confirmLabel:"Confirmar identidad",
+    onConfirm:()=>{ STATE.sesion.reautenticada=true; pushTrace("Reautenticación completada."); toast("Identidad confirmada."); render(); }
+  });
+}
+function simularInactividad(){
+  pushTrace("Sesión cerrada por inactividad (simulado). Los datos y las autorizaciones no se vieron afectados.");
+  STATE.autenticado=false; STATE.espacio=null; STATE.screen="acceso";
+  toast("Tu sesión se cerró por inactividad.");
+  render();
+}
+function cerrarSesion(){
+  confirmModal({
+    title:"Cerrar sesión",
+    body:"Esto termina la sesión de este dispositivo. Tus datos y autorizaciones no se ven afectados.",
+    confirmLabel:"Cerrar sesión",
+    onConfirm:()=>{
+      pushTrace("Sesión cerrada manualmente.");
+      STATE.autenticado=false; STATE.espacio=null; STATE.screen="acceso"; STATE.history=[];
+      render();
+    }
+  });
+}
+
+// ============================================================
+// ARRANQUE
+// ============================================================
+render();
+
+/* registro del Service Worker: solo funciona servido por https:// o localhost.
+   Si el archivo se abre suelto (file://) esta línea simplemente no hace nada. */
+if("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(e => console.warn("Service Worker no se pudo registrar:", e));
+  });
+}
+</script>
+</body>
+</html>
