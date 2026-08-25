@@ -17,6 +17,7 @@
   --verde:#4B8B6F; --verde-suave:#E9F3EE;
   --ambar:#B8862C; --ambar-suave:#FBF1DE;
   --rojo:#A6543F; --rojo-suave:#F7EAE6;
+  --ternura:#7D5A6B; --ternura-suave:#F4ECF0;
   --gris-900:#2A2E33; --gris-700:#565C64; --gris-500:#7C838C; --gris-300:#C7CCD1; --gris-100:#EEF0F2;
   --superficie-consulta:#F4F4F2;
   --fondo:#FAFAF8; --tarjeta:#FFFFFF;
@@ -167,6 +168,17 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-vis
 .vigencia.vencida .vigencia-text{color:var(--rojo);}
 
 /* banners */
+.nota-ternura{
+  background:var(--ternura-suave); color:var(--ternura); border-radius:8px; padding:9px 12px;
+  font-size:13px; font-style:italic; margin:6px 0 14px; display:flex; gap:10px; align-items:flex-start;
+  border-left:3px solid var(--ternura);
+}
+.nota-ternura .txt{flex:1;}
+.nota-ternura .cerrar{
+  background:none; border:none; color:var(--ternura); font-style:normal; font-weight:700;
+  cursor:pointer; padding:0 2px; line-height:1; opacity:.6;
+}
+.nota-ternura .cerrar:hover{opacity:1;}
 .banner{border-radius:8px; padding:10px 14px; font-size:13.5px; margin-bottom:14px; display:flex; gap:10px; align-items:flex-start;}
 .banner-info{background:var(--azul-suave); color:var(--azul-oscuro);}
 .banner-warn{background:var(--ambar-suave); color:#7A5A1B;}
@@ -352,6 +364,14 @@ const STATE = {
   trace:[], // registro de trazabilidad simulada, global
   sesion:{ activa:false, inicioSesion:null, reautenticada:false },
 };
+
+/* Nota de presencia/ternura: un recordatorio breve, opcional y descartable.
+   A propósito NO se guarda en DATA, NO se registra en pushTrace() y NO viaja
+   en ninguna exportación — existe solo mientras la pantalla está abierta,
+   igual que el recordatorio que representa. */
+function notaTernura(texto){
+  return `<div class="nota-ternura"><span class="txt">${texto}</span><button class="cerrar" type="button" aria-label="Ocultar este recordatorio" onclick="this.closest('.nota-ternura').remove()">×</button></div>`;
+}
 
 function pushTrace(msg){
   STATE.trace.unshift({t:nowStamp(), msg});
@@ -601,6 +621,7 @@ function screenMisProcesos(){
 function abrirCrearProceso(){
   openModal(`
     <h2>Crear Proceso</h2>
+    ${notaTernura("Este Proceso empieza con una persona, no con un problema.")}
     <p class="small muted">Los cuatro elementos son obligatorios. Si falta alguno, el Proceso no puede crearse.</p>
     <div class="field" id="f-situacion">
       <label>Situación concreta <span class="req">*</span></label>
@@ -793,6 +814,7 @@ function tabObservaciones(p){
             <span class="small">${fmt(o.fecha)}</span>
           </div>
           <p style="margin-top:8px;">${o.descripcion}</p>
+          ${o.voz ? `<div class="nota-ternura" style="margin-top:10px;"><span class="txt">"${o.voz}"</span></div>` : ""}
           <div class="btn-row"><button class="btn btn-text btn-sm" onclick="abrirCompartir('Observación','${o.id}')">Compartir</button></div>
         </div>`).join("")}
     `).join("") || `<div class="empty-state">Aún no hay Observaciones en este Proceso.</div>`}
@@ -801,7 +823,9 @@ function tabObservaciones(p){
 function abrirRegistrarObservacion(pid){
   openModal(`
     <h2>Registrar Observación</h2>
+    ${notaTernura("¿Qué le está pasando a esta persona — no solo qué está haciendo?")}
     <div class="field" id="f-obs"><label>Descripción de lo ocurrido <span class="req">*</span></label><textarea id="in-obs"></textarea><div class="errtext">Falta describir la situación antes de guardar.</div></div>
+    <div class="field"><label>Voz de la persona acompañada <span class="small muted">(opcional)</span></label><textarea id="in-obs-voz" placeholder="¿Qué dijo o mostró, con sus propias palabras o gestos?"></textarea><div class="help">Un espacio para lo que ella misma expresó — no solo lo que el adulto observó.</div></div>
     <div class="field"><label>Fecha</label><input type="date" id="in-obs-fecha" value="${todayISO()}"></div>
     <p class="small muted">Perspectiva de origen: <b>${STATE.espacio==='esc'?'Escuela':'Familia'}</b> (asignada automáticamente).</p>
     <div class="modal-actions">
@@ -814,8 +838,9 @@ function guardarObservacion(pid){
   const desc = document.getElementById("in-obs").value.trim();
   if(!desc){ document.getElementById("f-obs").classList.add("err"); return; }
   const id = "O" + (Math.floor(Math.random()*9000)+1000);
+  const voz = document.getElementById("in-obs-voz").value.trim();
   DATA.observaciones[pid] = DATA.observaciones[pid] || [];
-  DATA.observaciones[pid].unshift({id, fecha:document.getElementById("in-obs-fecha").value, perspectiva: STATE.espacio==='esc'?'Escuela':'Familia', descripcion:desc});
+  DATA.observaciones[pid].unshift({id, fecha:document.getElementById("in-obs-fecha").value, perspectiva: STATE.espacio==='esc'?'Escuela':'Familia', descripcion:desc, voz});
   pushTrace(`Observación registrada en Proceso ${pid}.`);
   closeModal(); toast("Observación guardada.");
   render();
@@ -856,6 +881,7 @@ function tabEstrategias(p){
 function abrirProponerEstrategia(pid){
   openModal(`
     <h2>Proponer Estrategia</h2>
+    ${notaTernura("Una estrategia se propone, se acompaña — no se aplica a alguien, se explora con alguien.")}
     <p class="small muted">Se presenta como una alternativa entre varias, nunca como recomendación única.</p>
     <div class="field" id="f-estr"><label>Descripción <span class="req">*</span></label><textarea id="in-estr"></textarea><div class="errtext">Falta vincular esta Estrategia a una descripción.</div></div>
     <div class="modal-actions">
@@ -1186,8 +1212,8 @@ function screenAutorizaciones(){
           <dt>Otorgante</dt><dd>${a.otorgante}</dd>
           <dt>Receptor</dt><dd>${a.receptor}</dd>
           <dt>Objeto</dt><dd>${a.objeto}</dd>
-          <dt>Finalidad</dt><dd>${a.finalidad}</dd>
         </div>
+        <p class="small muted" style="margin:6px 0 2px;">Vigente porque: <i>${a.finalidad}</i></p>
         <div class="vigencia ${v.cls}">
           <div class="bar"><div class="bar-fill" style="width:${v.pct}%"></div></div>
           <div class="vigencia-text">${v.label}</div>
@@ -1344,6 +1370,11 @@ function screenSesion(){
         <button class="btn btn-secondary btn-sm" onclick="simularInactividad()">Simular cierre por inactividad</button>
         <button class="btn btn-danger btn-sm" onclick="cerrarSesion()">Cerrar sesión</button>
       </div>
+    </div>
+    <div class="card">
+      <h3>Cómo llegas hoy</h3>
+      <p class="small muted">Un espacio solo para ti. No se guarda, no se comparte, no aparece en ningún panel de trazabilidad ni exportación — se borra en cuanto sales de esta pantalla.</p>
+      <textarea id="in-como-llegas" placeholder="¿Cómo llegas hoy a acompañar? No hace falta que sea nada en concreto." style="min-height:70px;"></textarea>
     </div>
     <div class="card">
       <h3>Panel de trazabilidad del prototipo</h3>
