@@ -1,5 +1,4 @@
 # Conociéndonos 2.0 — Prototipo navegable (Iteración 1)
-
 Prototipo navegable de **Conociéndonos 2.0 — Familia · Escuela · Puente**, la evolución de la
 bitácora doméstica "Conociéndonos" hacia una herramienta de acompañamiento situado entre
 familia y escuela.
