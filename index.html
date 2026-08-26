@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1F4667">
-<title>Conociéndonos 2.0 — Prototipo navegable (Iteración 1)</title>
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png" type="image/png">
-<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Conociéndonos">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Conociéndonos 2.0 — Prototipo navegable (Iteración 3 — Presencia y Ternura)</title>
 <style>
 :root{
   --azul:#2C5F8A; --azul-suave:#EAF1F7; --azul-oscuro:#1F4667;
@@ -21,6 +22,7 @@
   --gris-900:#2A2E33; --gris-700:#565C64; --gris-500:#7C838C; --gris-300:#C7CCD1; --gris-100:#EEF0F2;
   --superficie-consulta:#F4F4F2;
   --fondo:#FAFAF8; --tarjeta:#FFFFFF;
+
   --borde-radius:10px;
   --sombra:0 1px 2px rgba(30,30,30,.06), 0 1px 8px rgba(30,30,30,.05);
 }
@@ -47,17 +49,21 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-vis
 /* ---------- layout shell ---------- */
 #proto-banner{
   background:var(--gris-900); color:#fff; text-align:center; font-size:12.5px;
-  padding:5px 8px; letter-spacing:.02em;
+  padding:5px 8px calc(5px + env(safe-area-inset-bottom, 0px)) calc(8px + env(safe-area-inset-left, 0px));
+  padding-right:calc(8px + env(safe-area-inset-right, 0px));
+  letter-spacing:.02em;
 }
-#app-shell{display:flex; min-height:calc(100vh - 28px);}
+#app-shell{display:flex; min-height:calc(100vh - 28px); min-height:calc(100dvh - 28px);}
 #sidebar{
   width:210px; background:var(--tarjeta); border-right:1px solid var(--gris-100);
   display:flex; flex-direction:column; padding:14px 10px; flex-shrink:0;
+  padding-left:calc(10px + env(safe-area-inset-left, 0px));
 }
 #sidebar .brand{font-weight:700; font-size:16px; color:var(--azul-oscuro); padding:6px 10px 16px;}
 .navlink{
-  display:flex; align-items:center; gap:8px; padding:9px 10px; border-radius:8px; color:var(--gris-700);
+  display:flex; align-items:center; gap:8px; padding:11px 10px; border-radius:8px; color:var(--gris-700);
   font-size:14px; margin-bottom:2px; cursor:pointer; border:none; background:none; text-align:left; width:100%;
+  min-height:44px;
 }
 .navlink:hover{background:var(--gris-100);}
 .navlink.active{background:var(--azul-suave); color:var(--azul-oscuro); font-weight:600;}
@@ -68,21 +74,23 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-vis
 #main-col{flex:1; min-width:0; display:flex; flex-direction:column;}
 #topbar{
   background:var(--tarjeta); border-bottom:1px solid var(--gris-100); padding:10px 20px;
+  padding-right:calc(20px + env(safe-area-inset-right, 0px));
   display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:20;
+  flex-wrap:wrap;
 }
 #topbar .ctx{font-size:13px; color:var(--gris-700);}
 #topbar .ctx b{color:var(--gris-900);}
 #topbar-right{display:flex; align-items:center; gap:14px;}
-.iconbtn{background:none; border:none; font-size:18px; position:relative; padding:4px 6px; border-radius:6px; color:var(--gris-700);}
+.iconbtn{background:none; border:none; font-size:18px; position:relative; padding:10px; border-radius:6px; color:var(--gris-700); min-width:44px; min-height:44px;}
 .iconbtn:hover{background:var(--gris-100);}
 .badge-count{
   position:absolute; top:-2px; right:-2px; background:var(--rojo); color:#fff; font-size:10px;
   border-radius:8px; min-width:15px; height:15px; display:flex; align-items:center; justify-content:center; padding:0 3px;
 }
-#account-chip{display:flex; align-items:center; gap:6px; background:var(--gris-100); border:none; border-radius:20px; padding:5px 12px 5px 6px;}
-.avatar{width:24px; height:24px; border-radius:50%; background:var(--azul); color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;}
+#account-chip{display:flex; align-items:center; gap:6px; background:var(--gris-100); border:none; border-radius:20px; padding:8px 12px 8px 6px; min-height:44px;}
+.avatar{width:24px; height:24px; border-radius:50%; background:var(--azul); color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0;}
 
-#content{padding:22px 26px 60px; max-width:980px;}
+#content{padding:22px 26px 60px; max-width:980px; padding-right:calc(26px + env(safe-area-inset-right, 0px)); padding-left:calc(26px + 0px);}
 .breadcrumb{font-size:12.5px; color:var(--gris-500); margin-bottom:10px;}
 .breadcrumb a{color:var(--gris-500);}
 .breadcrumb .cur{color:var(--gris-900); font-weight:600;}
@@ -122,15 +130,15 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-vis
 .chip-estr-cerrada{background:var(--gris-100); color:var(--gris-700);}
 
 /* buttons */
-.btn{border-radius:8px; padding:8px 16px; font-weight:600; border:1px solid transparent; display:inline-flex; align-items:center; gap:6px;}
+.btn{border-radius:8px; padding:10px 16px; font-weight:600; border:1px solid transparent; display:inline-flex; align-items:center; gap:6px; min-height:44px; touch-action:manipulation;}
 .btn-primary{background:var(--azul); color:#fff;}
 .btn-primary:hover{background:var(--azul-oscuro);}
 .btn-secondary{background:#fff; border-color:var(--gris-300); color:var(--gris-900);}
 .btn-secondary:hover{border-color:var(--azul);}
-.btn-text{background:none; border:none; color:var(--azul); padding:6px 4px; font-weight:600;}
+.btn-text{background:none; border:none; color:var(--azul); padding:10px 6px; font-weight:600; min-height:40px;}
 .btn-danger{background:#fff; border-color:var(--rojo); color:var(--rojo);}
 .btn-danger:hover{background:var(--rojo-suave);}
-.btn-sm{padding:5px 12px; font-size:13px;}
+.btn-sm{padding:8px 12px; font-size:13px; min-height:38px;}
 .btn[disabled]{opacity:.45; cursor:not-allowed;}
 .btn-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;}
 
@@ -140,7 +148,8 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-vis
 .field .req{color:var(--rojo);}
 .field .help{font-size:12px; color:var(--gris-500); margin-top:4px;}
 .field input[type=text], .field input[type=date], .field textarea, .field select{
-  width:100%; padding:9px 11px; border:1px solid var(--gris-300); border-radius:8px; font-size:14px; font-family:inherit;
+  width:100%; padding:11px 12px; border:1px solid var(--gris-300); border-radius:8px; font-size:16px; font-family:inherit;
+  -webkit-appearance:none; appearance:none;
 }
 .field textarea{min-height:70px; resize:vertical;}
 .field.err input, .field.err textarea{border-color:var(--rojo);}
@@ -168,6 +177,10 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-vis
 .vigencia.vencida .vigencia-text{color:var(--rojo);}
 
 /* banners */
+.banner{border-radius:8px; padding:10px 14px; font-size:13.5px; margin-bottom:14px; display:flex; gap:10px; align-items:flex-start;}
+.banner-info{background:var(--azul-suave); color:var(--azul-oscuro);}
+.banner-warn{background:var(--ambar-suave); color:#7A5A1B;}
+.banner-neutral{background:var(--gris-100); color:var(--gris-700);}
 .nota-ternura{
   background:var(--ternura-suave); color:var(--ternura); border-radius:8px; padding:9px 12px;
   font-size:13px; font-style:italic; margin:6px 0 14px; display:flex; gap:10px; align-items:flex-start;
@@ -176,22 +189,18 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-vis
 .nota-ternura .txt{flex:1;}
 .nota-ternura .cerrar{
   background:none; border:none; color:var(--ternura); font-style:normal; font-weight:700;
-  cursor:pointer; padding:0 2px; line-height:1; opacity:.6;
+  cursor:pointer; padding:8px; line-height:1; opacity:.6; min-width:32px; min-height:32px;
 }
 .nota-ternura .cerrar:hover{opacity:1;}
-.banner{border-radius:8px; padding:10px 14px; font-size:13.5px; margin-bottom:14px; display:flex; gap:10px; align-items:flex-start;}
-.banner-info{background:var(--azul-suave); color:var(--azul-oscuro);}
-.banner-warn{background:var(--ambar-suave); color:#7A5A1B;}
-.banner-neutral{background:var(--gris-100); color:var(--gris-700);}
 
 /* toasts */
 #toast-region{position:fixed; top:16px; right:16px; z-index:200; display:flex; flex-direction:column; gap:8px; max-width:340px;}
 .toast{background:var(--verde-suave); color:#2E6349; border-radius:8px; padding:10px 14px; font-size:13.5px; box-shadow:var(--sombra); border:1px solid #cfe6da;}
 
 /* modal */
-#modal-overlay{position:fixed; inset:0; background:rgba(30,32,34,.45); display:none; align-items:center; justify-content:center; z-index:100; padding:20px;}
+#modal-overlay{position:fixed; inset:0; background:rgba(30,32,34,.45); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; padding-bottom:calc(20px + env(safe-area-inset-bottom, 0px));}
 #modal-overlay.open{display:flex;}
-.modal{background:#fff; border-radius:12px; max-width:480px; width:100%; padding:22px 24px; box-shadow:0 10px 40px rgba(0,0,0,.2); max-height:85vh; overflow:auto;}
+.modal{background:#fff; border-radius:12px; max-width:480px; width:100%; padding:22px 24px; box-shadow:0 10px 40px rgba(0,0,0,.2); max-height:85vh; max-height:85dvh; overflow:auto; -webkit-overflow-scrolling:touch;}
 .modal h2{margin-bottom:4px;}
 .modal .modal-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:18px;}
 .modal .warn-box{background:var(--ambar-suave); color:#7A5A1B; border-radius:8px; padding:10px 12px; font-size:13px; margin:12px 0;}
@@ -208,23 +217,44 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-vis
 .section-label{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--gris-500); margin:18px 0 8px;}
 
 /* responsive */
+html, body{overflow-x:hidden; max-width:100%;}
+#content, .card, .modal, table{max-width:100%;}
+table{display:block; overflow-x:auto; -webkit-overflow-scrolling:touch;}
+
 @media (max-width:760px){
   #app-shell{flex-direction:column;}
   #sidebar{
-    width:100%; flex-direction:row; overflow-x:auto; border-right:none; border-bottom:1px solid var(--gris-100);
-    padding:8px; gap:2px;
+    width:100%; flex-direction:row; overflow-x:auto; -webkit-overflow-scrolling:touch; border-right:none; border-bottom:1px solid var(--gris-100);
+    padding:8px; padding-left:calc(8px + env(safe-area-inset-left, 0px)); padding-right:calc(8px + env(safe-area-inset-right, 0px)); gap:2px;
   }
   #sidebar .brand{display:none;}
   #sidebar .navgroup-label{display:none;}
-  .navlink{white-space:nowrap; padding:8px 10px;}
-  #content{padding:16px;}
+  .navlink{white-space:nowrap; padding:11px 12px;}
+  #topbar{padding:8px 14px; padding-right:calc(14px + env(safe-area-inset-right, 0px));}
+  #topbar .ctx{font-size:12px; line-height:1.5;}
+  #content{padding:16px; padding-right:calc(16px + env(safe-area-inset-right, 0px)); padding-bottom:calc(60px + env(safe-area-inset-bottom, 0px));}
   .field-row{flex-direction:column; gap:0;}
-  .modal{max-width:100%;}
+  .modal{max-width:100%; width:100%; max-height:92dvh; max-height:92vh; border-radius:16px 16px 0 0; margin-top:auto;}
+  #modal-overlay{padding:0; align-items:flex-end;}
+  .dl{grid-template-columns:1fr;}
+  .dl dt{margin-top:8px;}
+  h1{font-size:20px;}
+}
+@media (max-width:420px){
+  .btn{padding:10px 12px; font-size:13.5px;}
+  .card{padding:13px 14px;}
+}
+@media (orientation:landscape) and (max-height:480px){
+  .modal{max-height:96dvh; max-height:96vh;}
 }
 </style>
 </head>
 <body>
-<div id="proto-banner">PROTOTIPO NAVEGABLE — ITERACIÓN 1 · DATOS ÚNICAMENTE FICTICIOS · Conociéndonos 2.0</div>
+<div id="proto-banner">PROTOTIPO NAVEGABLE — ITERACIÓN 3 · PRESENCIA Y TERNURA · DATOS ÚNICAMENTE FICTICIOS · Conociéndonos 2.0</div>
+<div id="demo-banner" style="display:none; background:#6A4E97; color:#fff; text-align:center; font-size:13px; padding:7px 8px; font-weight:700; letter-spacing:.02em;">
+  ENTORNO DEMOSTRATIVO — DATOS FICTICIOS
+  <button onclick="salirModoDemo()" style="margin-left:14px; background:#fff; color:#6A4E97; border:none; border-radius:6px; padding:3px 10px; font-weight:700; cursor:pointer;">Salir del Modo Demostración</button>
+</div>
 <div id="app-shell">
   <nav id="sidebar" aria-label="Navegación principal"></nav>
   <div id="main-col">
@@ -285,7 +315,7 @@ const DATA = {
       {id:"O1", fecha:"2026-06-05", perspectiva:"Familia", descripcion:"Tardó 25 minutos en sentarse a trabajar; se distrajo varias veces antes de comenzar."},
       {id:"O2", fecha:"2026-06-19", perspectiva:"Familia", descripcion:"Con un temporizador visible, comenzó la tarea a los 6 minutos."},
       {id:"O3", fecha:"2026-07-02", perspectiva:"Escuela", descripcion:"En el aula, inicia el trabajo individual con mayor facilidad cuando la consigna está dividida en pasos escritos."},
-      {id:"O4", fecha:"2026-07-20", perspectiva:"Familia", descripcion:"El fin de semana, con la tarea anticipada la noche anterior, comenzó sin recordatorios."}
+      {id:"O4", fecha:"2026-07-20", perspectiva:"Familia", descripcion:"El fin de semana, con la tarea anticipada la noche anterior, comenzó sin recordatorios.", voz:"Hoy sí sabía qué me tocaba, no tuve que adivinar."}
     ],
     P2:[
       {id:"O5", fecha:"2026-02-15", perspectiva:"Escuela", descripcion:"Se negoció el uso de materiales antes de iniciar la actividad, sin intervención docente."}
@@ -325,17 +355,17 @@ const DATA = {
     ]
   },
   conexiones:[
-    {id:"C1", estado:"Activa", familiaLabel:"Familia (Relación ficticia)", escuelaLabel:"Escuela — Prof. Ana (ficticia), 4°A",
+    {id:"C1", procesoId:"P1", estado:"Activa", familiaLabel:"Familia (Relación ficticia)", escuelaLabel:"Escuela — Prof. Ana (ficticia), 4°A",
      elementos:[
        {tipo:"Observación", ref:"O3", resumen:"Observación del 02/07/2026 sobre inicio de trabajo individual"},
        {tipo:"Aprendizaje", ref:"L1", resumen:"Aprendizaje: pasos concretos y límite de tiempo visible"}
      ]}
   ],
   autorizaciones:[
-    {id:"A1", tipo:"ordinaria", otorgante:"Familia (ficticia)", receptor:"Prof. Ana López (docente.demo@docente.aefcm.gob.mx)",
+    {id:"A1", tipo:"ordinaria", otorgante:"Familia (ficticia)", receptor:"Prof. Ana López (docente.ana@docente.aefcm.gob.mx)",
      objeto:"Proceso P1", finalidad:"Colaborar en el seguimiento del proceso de la tarea escolar",
      inicio:"2026-06-02", vigenciaDias:90, estado:"vigente"},
-    {id:"A2", tipo:"ordinaria", otorgante:"Familia (ficticia)", receptor:"Prof. Ana López (docente.demo@docente.aefcm.gob.mx)",
+    {id:"A2", tipo:"ordinaria", otorgante:"Familia (ficticia)", receptor:"Prof. Ana López (docente.ana@docente.aefcm.gob.mx)",
      objeto:"Aprendizaje L1", finalidad:"Consultar el aprendizaje compartido para dar continuidad en el aula",
      inicio:"2026-05-31", vigenciaDias:90, estado:"vigente"},
     {id:"A3", tipo:"ordinaria", otorgante:"Familia (ficticia)", receptor:"Colaborador Temporal (ficticio)",
@@ -354,28 +384,133 @@ const DATA = {
 // Ajustar A2 para que quede "próxima a vencer" respecto de hoy (24/08/2026)
 DATA.autorizaciones[1].inicio = "2026-05-31"; // vence 2026-08-29 → 5 días, próxima a vencer
 
+// ============================================================
+// ITERACIÓN 2 — datos añadidos (todos ficticios)
+// ============================================================
+
+// Directorio de personas verificadas, para el selector de receptor institucional (Punto de Auditoría 3)
+const PERSONAS_VERIFICADAS = [
+  {id:"pv1", nombre:"Prof. Ana López", correo:"docente.ana@docente.aefcm.gob.mx", institucion:"Escuela Primaria \"Ejemplo Ficticio\" (ficticia)", contexto:"Docente de 4°A", institucional:true, facultada:false},
+  {id:"pv2", nombre:"Prof. Luis Herrera", correo:"docente.luis@docente.aefcm.gob.mx", institucion:"Escuela Primaria \"Ejemplo Ficticio\" (ficticia)", contexto:"Docente de 4°B — sin relación vigente con este Proceso", institucional:true, facultada:false},
+  {id:"pv3", nombre:"Mtra. Carla Jiménez", correo:"carla.jimenez@aefcm.gob.mx", institucion:"Zona Escolar 12 (ficticia)", contexto:"Responsable institucional, previamente facultada para Autorización de consolidación", institucional:true, facultada:true},
+  {id:"pv4", nombre:"Marta Colaboradora", correo:"colaboradora.demo@ejemplo-ficticio.org", institucion:"N/A — cuenta no institucional", contexto:"Colaboradora temporal (Familia)", institucional:false, facultada:false},
+];
+
+// Actores de demostración — herramienta exclusiva del prototipo, nunca del sistema productivo
+const ACTORES = [
+  {id:"fam", nombre:"Usuario Demostrativo", correo:"familia.demo@ejemplo-ficticio.org", tipo:"Familia", rolLabel:"Administrador familiar", desc:"Dueño de sus propios Procesos."},
+  {id:"docA", nombre:"Prof. Ana López", correo:"docente.ana@docente.aefcm.gob.mx", tipo:"Escuela", rolLabel:"Docente con Autorización vigente", desc:"Tiene una Autorización vigente sobre el Proceso activo (P1)."},
+  {id:"docB", nombre:"Prof. Luis Herrera", correo:"docente.luis@docente.aefcm.gob.mx", tipo:"Escuela", rolLabel:"Docente sin Autorización vigente", desc:"No tiene ninguna Autorización vigente sobre ningún Proceso."},
+  {id:"colab", nombre:"Marta Colaboradora", correo:"colaboradora.demo@ejemplo-ficticio.org", tipo:"Familia", rolLabel:"Colaboradora temporal", desc:"Autorización específica y acotada, nunca amplia por defecto."},
+];
+function actorInfo(id){ return ACTORES.find(a=>a.id===id) || ACTORES[0]; }
+
+// Autorización adicional del Colaborador temporal (acotada, Proceso P1)
+DATA.autorizaciones.push({id:"A4", tipo:"ordinaria", otorgante:"Familia (ficticia)", receptor:"Marta Colaboradora (colaboradora.demo@ejemplo-ficticio.org)",
+  objeto:"Proceso P1", finalidad:"Apoyar puntualmente en la exploración de una Estrategia, de forma acotada", inicio:"2026-07-20", vigenciaDias:90, estado:"vigente"});
+// Autorización histórica de Docente B, ya vencida (Escenario E del encargo)
+DATA.autorizaciones.push({id:"A5", tipo:"ordinaria", otorgante:"Familia (ficticia)", receptor:"Prof. Luis Herrera (docente.luis@docente.aefcm.gob.mx)",
+  objeto:"Proceso P2", finalidad:"Apoyo temporal ya concluido", inicio:"2026-01-01", vigenciaDias:30, estado:"vigente"}); // vence 2026-01-31, ya vencida respecto de hoy
+
+// Relación institucional docente-Proceso, para el Panel Institucional (cambio de docente/escuela)
+const DATA_RELACIONES = [
+  {id:"R1", procesoId:"P1", docenteId:"docA", vigente:true, inicio:"2026-06-02", escuela:"Escuela Primaria \"Ejemplo Ficticio\" (ficticia)"}
+];
+
+// Historial de versiones por entidad, para Recuperación/Corrección (Punto de Auditoría 20-21)
+const DATA_HISTORIAL = {
+  O1: [
+    {fecha:"2026-06-05", actor:"Usuario Demostrativo", accion:"Registro original", contenido:"Tardó 25 min en sentarse a trabajr; se distrajo varias veces antes de comenzar."},
+    {fecha:"2026-06-06", actor:"Usuario Demostrativo", accion:"Corrección de error de captura", contenido:"Tardó 25 minutos en sentarse a trabajar; se distrajo varias veces antes de comenzar."}
+  ]
+};
+
+// Fotografía del estado inicial, para el Modo Demostración (entorno aislado, Punto 11 de Fase 7.2)
+const SEED_SNAPSHOT = JSON.parse(JSON.stringify(DATA));
+const SEED_RELACIONES = JSON.parse(JSON.stringify(DATA_RELACIONES));
+const SEED_HISTORIAL = JSON.parse(JSON.stringify(DATA_HISTORIAL));
+function resetDataFrom(snap){ Object.keys(DATA).forEach(k=>delete DATA[k]); Object.keys(snap).forEach(k=>{ DATA[k]=JSON.parse(JSON.stringify(snap[k])); }); }
+function resetArrayFrom(arr, snap){ arr.length=0; snap.forEach(x=>arr.push(JSON.parse(JSON.stringify(x)))); }
+function resetObjFrom(obj, snap){ Object.keys(obj).forEach(k=>delete obj[k]); Object.keys(snap).forEach(k=>{ obj[k]=JSON.parse(JSON.stringify(snap[k])); }); }
+let _prevDataBackup=null, _prevRelBackup=null, _prevHistBackup=null;
+function entrarModoDemo(){
+  _prevDataBackup = JSON.parse(JSON.stringify(DATA));
+  _prevRelBackup = JSON.parse(JSON.stringify(DATA_RELACIONES));
+  _prevHistBackup = JSON.parse(JSON.stringify(DATA_HISTORIAL));
+  resetDataFrom(SEED_SNAPSHOT);
+  resetArrayFrom(DATA_RELACIONES, SEED_RELACIONES);
+  resetObjFrom(DATA_HISTORIAL, SEED_HISTORIAL);
+  STATE.modoDemo = true;
+  STATE.autenticado = true;
+  STATE.actor = "fam";
+  STATE.espacio = "fam";
+  STATE.sesion.activa = true;
+  STATE.sesion.inicioSesion = nowStamp();
+  STATE.trace = [];
+  STATE.history = [];
+  pushTrace("Entrada al Modo Demostración: entorno aislado y separado del entorno normal; datos ficticios reiniciados a su estado inicial.");
+  goTo("mis-procesos");
+}
+function salirModoDemo(){
+  resetDataFrom(_prevDataBackup);
+  resetArrayFrom(DATA_RELACIONES, _prevRelBackup);
+  resetObjFrom(DATA_HISTORIAL, _prevHistBackup);
+  STATE.modoDemo = false;
+  STATE.autenticado = false;
+  STATE.actor = "fam"; STATE.espacio = null;
+  STATE.screen = "acceso"; STATE.history=[];
+  render();
+}
+
+function esVigente(a){
+  if(a.estado!=="vigente") return false;
+  return vigenciaInfo(a).cls !== "vencida";
+}
+function autorizacionVigentePara(actorId, objeto){
+  const actor = actorInfo(actorId);
+  if(actor.id==="fam") return true; // Administrador familiar: dueño de sus propios Procesos
+  return DATA.autorizaciones.some(a => esVigente(a) && a.receptor.includes(actor.correo) && a.objeto===objeto);
+}
+function autorizacionRelevantePara(actorId, objeto){
+  // para explicar el motivo de un acceso denegado: busca cualquier Autorización (vigente o no) de este actor sobre este objeto
+  const actor = actorInfo(actorId);
+  return DATA.autorizaciones.filter(a=>a.receptor.includes(actor.correo) && a.objeto===objeto).sort((x,y)=> (x.inicio<y.inicio?1:-1))[0] || null;
+}
+
+// ============================================================
+// H1 (Fase 8.1) — Control de acceso a Conexiones del Puente
+// ============================================================
+// Regla aprobada: "Si el actor no tiene relación autorizada con la Conexión,
+// la Conexión no existe para ese actor." Se expresa reutilizando el MISMO
+// motor de permisos ya verificado para Procesos (autorizacionVigentePara) —
+// una Conexión es visible/operable para un actor si, y solo si, ese actor
+// tiene una Autorización vigente sobre el Proceso al que esa Conexión
+// pertenece. Nunca "if(actor.id==='fam')" como regla artificial.
+function actorPuedeVerConexion(actorId, conexion){
+  if(!conexion || !conexion.procesoId) return false;
+  return autorizacionVigentePara(actorId, "Proceso "+conexion.procesoId);
+}
+function conexionesVisiblesPara(actorId){
+  return DATA.conexiones.filter(c=>actorPuedeVerConexion(actorId, c));
+}
+
 // ---------- ESTADO DE APLICACIÓN ----------
 const STATE = {
   autenticado:false,
   espacio:null, // "fam" | "esc"
+  actor:"fam",  // id de ACTORES — quién está "actuando" en este momento (herramienta exclusiva del prototipo)
+  actorElegidoManualmente:false, // H4 (Fase 8.1): distingue "actor asignado por defecto" de "actor elegido explícitamente por la persona"
+  modoDemo:false,
   screen:"acceso",
   params:{},
   history:[],
-  trace:[], // registro de trazabilidad simulada, global
+  trace:[], // registro de trazabilidad simulada, global (con categoría para Auditoría-Familia)
   sesion:{ activa:false, inicioSesion:null, reautenticada:false },
 };
 
-/* Nota de presencia/ternura: un recordatorio breve, opcional y descartable.
-   A propósito NO se guarda en DATA, NO se registra en pushTrace() y NO viaja
-   en ninguna exportación — existe solo mientras la pantalla está abierta,
-   igual que el recordatorio que representa. */
-function notaTernura(texto){
-  return `<div class="nota-ternura"><span class="txt">${texto}</span><button class="cerrar" type="button" aria-label="Ocultar este recordatorio" onclick="this.closest('.nota-ternura').remove()">×</button></div>`;
-}
-
-function pushTrace(msg){
-  STATE.trace.unshift({t:nowStamp(), msg});
-  if(STATE.trace.length>40) STATE.trace.pop();
+function pushTrace(msg, cat){
+  STATE.trace.unshift({t:nowStamp(), msg, cat:cat||"general"});
+  if(STATE.trace.length>60) STATE.trace.pop();
 }
 
 function goTo(screen, params){
@@ -401,6 +536,18 @@ function toast(msg){
   setTimeout(()=>{ el.style.transition="opacity .3s"; el.style.opacity="0"; setTimeout(()=>el.remove(),300); }, 3200);
 }
 
+// ---------- nota de presencia / ternura ----------
+// Principio de diseño (no decoración): un recordatorio breve, opcional y descartable,
+// que invita a mirar la situación, el contexto y a la persona antes de registrar sobre ella.
+// Reglas que esta función garantiza por construcción:
+//  - No genera ningún dato ni se guarda en ningún lado (no toca STATE ni DATA).
+//  - No se registra en trazabilidad (nunca llama a pushTrace).
+//  - No aparece en exportaciones (no forma parte de ningún objeto exportable).
+//  - Es descartable con un solo toque, sin bloquear ninguna acción.
+function notaTernura(texto){
+  return `<div class="nota-ternura"><span class="txt">${texto}</span><button class="cerrar" type="button" aria-label="Ocultar este recordatorio" onclick="this.closest('.nota-ternura').remove()">×</button></div>`;
+}
+
 // ---------- modal ----------
 function openModal(html, onOpen){
   const overlay = document.getElementById("modal-overlay");
@@ -408,7 +555,12 @@ function openModal(html, onOpen){
   overlay.classList.add("open");
   overlay.onclick = (e)=>{ if(e.target===overlay) closeModal(); };
   document.addEventListener("keydown", modalEscHandler);
-  const focusable = overlay.querySelector("button, input, textarea, select");
+  // H2 (Fase 8.1): el foco inicial debe caer en el primer campo REAL del formulario, no en el
+  // botón de cerrar de una nota de presencia (.nota-ternura) que pueda anteceder a esos campos.
+  // La nota y su botón de cierre se conservan exactamente igual, y siguen siendo alcanzables
+  // con Tab/Shift+Tab como cualquier otro control del modal — solo dejan de ser el foco inicial.
+  const candidatos = overlay.querySelectorAll("button, input, textarea, select");
+  const focusable = Array.from(candidatos).find(el => !el.closest(".nota-ternura"));
   if(focusable) focusable.focus();
   if(onOpen) onOpen();
 }
@@ -439,16 +591,29 @@ function confirmModal(opts){
 function currentProceso(){ return DATA.procesos.find(p=>p.id===STATE.params.id); }
 
 function renderSidebar(){
-  const esc = STATE.espacio;
+  const actor = actorInfo(STATE.actor);
   const items = [
     {group:"Trabajo"},
     {screen:"mis-procesos", label:"Inicio / Mis Procesos", ic:"🗂️"},
+    {screen:"busqueda", label:"Búsqueda Contextual", ic:"🔎"},
     {screen:"puente", label:"Puente Familia-Escuela", ic:"🌉"},
     {screen:"autorizaciones", label:"Autorizaciones", ic:"🔑"},
+  ];
+  if(actor.id==="fam"){
+    // H3 (Fase 8.1): la condición de visibilidad ahora coincide exactamente con la condición
+    // real de acceso de screenAuditoria() (actor.id==="fam") — antes usaba actor.tipo==="Familia",
+    // que también incluía a la Colaboradora temporal, a quien la pantalla igualmente denegaba el acceso.
+    items.push({screen:"auditoria", label:"Auditoría y Trazabilidad", ic:"📜"});
+  }
+  if(actor.id==="docA" || actor.id==="docB"){
+    items.push({screen:"institucional", label:"Panel Institucional", ic:"🏫"});
+  }
+  items.push(
     {group:"Cuenta"},
     {screen:"notificaciones", label:"Notificaciones", ic:"🔔"},
+    {screen:"config-notif", label:"Configuración de Notificaciones", ic:"⚙️"},
     {screen:"sesion", label:"Identidad y Sesión", ic:"👤"},
-  ];
+  );
   let html = `<div class="brand">Conociéndonos</div>`;
   items.forEach(it=>{
     if(it.group){ html+=`<div class="navgroup-label">${it.group}</div>`; return; }
@@ -460,14 +625,23 @@ function renderSidebar(){
 
 function renderTopbar(){
   const unread = DATA.notificaciones.filter(n=>!n.leida).length;
-  const espacioLabel = STATE.espacio==="esc" ? "Escuela — Docente de 4°A" : "Familia";
-  const initials = STATE.espacio==="esc" ? "PA" : "UD";
-  let ctxHtml = `<div class="ctx">Espacio activo: <b>${espacioLabel}</b> · <a href="#" onclick="event.preventDefault(); goTo('seleccion-contexto')">cambiar</a></div>`;
+  const actor = actorInfo(STATE.actor);
+  const initials = actor.nombre.split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase();
+  // H7 (Fase 8.2-B): antes este rótulo empezaba con actor.tipo ("Familia"), idéntico para el
+  // Administrador familiar y para la Colaboradora temporal — solo se distinguían por el nombre
+  // y el rol, en texto más pequeño. Ahora el rol específico (rolLabel), que ya existe en el
+  // sistema y ya diferencia a ambos actores sin ambigüedad, encabeza el rótulo; el espacio
+  // (Familia/Escuela) pasa a ser información secundaria entre paréntesis. No cambia ningún
+  // permiso, rol, autorización ni la lógica del Puente — es únicamente identificación visual.
+  let ctxHtml = `<div class="ctx"><b>${actor.rolLabel}</b> — ${actor.nombre} <span class="small muted">(${actor.tipo})</span> ·
+    <a href="#" onclick="event.preventDefault(); goTo('seleccion-contexto')">cambiar espacio</a> ·
+    <a href="#" onclick="event.preventDefault(); abrirSelectorActor()" style="color:#7A5A1B; font-weight:600;" title="Herramienta exclusiva del prototipo">🎭 cambiar actor (solo prototipo)</a>
+  </div>`;
   document.getElementById("topbar").innerHTML = `
     ${ctxHtml}
     <div id="topbar-right">
       <button class="iconbtn" title="Notificaciones" onclick="goTo('notificaciones')">🔔${unread?`<span class="badge-count">${unread}</span>`:""}</button>
-      <button id="account-chip" onclick="goTo('sesion')"><span class="avatar">${initials}</span><span class="small">Usuario Demostrativo</span></button>
+      <button id="account-chip" onclick="goTo('sesion')" title="${actor.rolLabel}"><span class="avatar">${initials}</span><span class="small">${actor.nombre}</span></button>
     </div>
   `;
 }
@@ -486,10 +660,13 @@ function breadcrumb(items){
 
 // ---------- MAIN RENDER DISPATCH ----------
 function render(){
+  document.getElementById("demo-banner").style.display = STATE.modoDemo ? "flex" : "none";
+  document.getElementById("demo-banner").style.justifyContent = "center";
+  document.getElementById("demo-banner").style.alignItems = "center";
   if(!STATE.autenticado){
     document.getElementById("sidebar").innerHTML="";
     document.getElementById("topbar").innerHTML="";
-    document.getElementById("content").innerHTML = STATE.screen==="modo-demo-info" ? screenModoDemoInfo() : screenAcceso();
+    document.getElementById("content").innerHTML = screenAcceso();
     return;
   }
   if(STATE.screen==="seleccion-contexto"){
@@ -508,9 +685,20 @@ function render(){
     case "autorizaciones": html = screenAutorizaciones(); break;
     case "notificaciones": html = screenNotificaciones(); break;
     case "sesion": html = screenSesion(); break;
+    case "busqueda": html = screenBusqueda(); break;
+    case "institucional": html = screenPanelInstitucional(); break;
+    case "auditoria": html = screenAuditoria(); break;
+    case "config-notif": html = screenConfigNotificaciones(); break;
     default: html = screenMisProcesos();
   }
   document.getElementById("content").innerHTML = html;
+  // Hook de carga curricular asíncrona (Fase 8.3): la pestaña "curricular" se renderiza primero
+  // con un esqueleto síncrono (tabCurricular) y aquí, después de insertarse en el DOM, se dispara
+  // la carga real desde CurriculumService — nunca bloquea el render() general de la aplicación.
+  if(STATE.screen==="proceso" && (STATE.params.tab||"situacion")==="curricular"){
+    const p = currentProceso();
+    if(p) cargarPanelCurricular(p.id);
+  }
 }
 
 // ============================================================
@@ -532,7 +720,7 @@ function screenAcceso(){
       </div>
       <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="doLogin()">Iniciar sesión</button>
       <p class="small" style="text-align:center; margin-top:16px;">
-        <a href="#" onclick="event.preventDefault(); alert('Prototipo: el Modo Demostración es una pantalla propia de la Fase 5 (Pantalla 24), fuera del alcance de esta primera iteración. Este prototipo ya usa exclusivamente datos ficticios.')" style="color:#6A4E97; font-weight:600;">Entrar al Modo Demostración</a>
+        <a href="#" onclick="event.preventDefault(); entrarModoDemo()" style="color:#6A4E97; font-weight:600;">Entrar al Modo Demostración</a>
       </p>
       <hr class="divider">
       <p class="small">Cuentas institucionales reconocidas: <b>@aefcm.gob.mx</b> y <b>@docente.aefcm.gob.mx</b>. El dominio, por sí solo, no concede acceso a contenido pedagógico.</p>
@@ -541,7 +729,7 @@ function screenAcceso(){
 }
 function doLogin(){
   const correo = document.getElementById("in-correo").value;
-  pushTrace(`Verificación de acceso simulada para ${correo}.`);
+  pushTrace(`Verificación de acceso simulada para ${correo}.`, "acceso");
   STATE.autenticado = true;
   STATE.sesion.activa = true;
   STATE.sesion.inicioSesion = nowStamp();
@@ -571,8 +759,59 @@ function screenSeleccionContexto(){
   </div>`;
 }
 function chooseEspacio(id){
+  // H4 (Fase 8.1): antes, esta función SIEMPRE reiniciaba STATE.actor al valor por defecto del
+  // espacio elegido, sin importar si la persona ya había elegido un actor manualmente con
+  // "cambiar actor". Ahora: si el actor actual sigue siendo válido para el nuevo espacio, se
+  // CONSERVA; si no lo es, se reinicia — pero solo se avisa de forma visible cuando existía una
+  // elección manual previa que se está sustituyendo (nunca un cambio de identidad silencioso).
   STATE.espacio = id;
-  pushTrace(`Contexto de trabajo activo: ${id==='fam'?'Familia':'Escuela'}.`);
+  const actorActual = actorInfo(STATE.actor);
+  const actorSigueValido = (id==="fam" && actorActual.tipo==="Familia") || (id==="esc" && actorActual.tipo==="Escuela");
+  if(actorSigueValido){
+    pushTrace(`Contexto de trabajo activo: ${id==='fam'?'Familia':'Escuela'}. Actor conservado: ${actorActual.nombre}.`);
+  } else {
+    const nombreAnterior = actorActual.nombre;
+    const huboEleccionManual = STATE.actorElegidoManualmente;
+    STATE.actor = id==="fam" ? "fam" : "docA";
+    STATE.actorElegidoManualmente = false;
+    if(huboEleccionManual){
+      pushTrace(`Cambio de espacio: el actor elegido manualmente ("${nombreAnterior}") no pertenece al espacio ${id==='fam'?'Familia':'Escuela'}. Actor reiniciado a ${actorInfo(STATE.actor).nombre}.`, "acceso");
+      toast(`"${nombreAnterior}" no pertenece a este espacio. Actor reiniciado a ${actorInfo(STATE.actor).nombre}.`);
+    } else {
+      pushTrace(`Contexto de trabajo activo: ${id==='fam'?'Familia':'Escuela'}. Actor: ${actorInfo(STATE.actor).nombre}.`);
+    }
+  }
+  goTo("mis-procesos");
+}
+
+// ============================================================
+// SELECTOR "ACTOR DE DEMOSTRACIÓN" — herramienta exclusiva del prototipo
+// ============================================================
+function abrirSelectorActor(){
+  openModal(`
+    <h2>Cambiar actor</h2>
+    <div class="banner banner-warn" style="font-weight:700;">CAMBIO DE ACTOR — SOLO PROTOTIPO. Esta herramienta no existe en el sistema productivo; permite demostrar, dentro de esta demostración, cómo se comporta la interfaz con permisos distintos.</div>
+    ${ACTORES.map(a=>`
+      <div class="card clickable" style="padding:10px 14px; ${STATE.actor===a.id?'border-color:var(--azul);':''}" onclick="elegirActor('${a.id}')">
+        <div style="display:flex; justify-content:space-between; gap:8px;">
+          <b>${a.nombre}</b>
+          <span class="chip ${a.tipo==='Familia'?'chip-familia':'chip-escuela'}">${a.tipo}</span>
+        </div>
+        <p class="small" style="margin:2px 0 0;">${a.rolLabel} · ${a.correo}</p>
+        <p class="small muted" style="margin:2px 0 0;">${a.desc}</p>
+      </div>
+    `).join("")}
+    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cerrar</button></div>
+  `);
+}
+function elegirActor(id){
+  STATE.actor = id;
+  STATE.actorElegidoManualmente = true; // H4: marca que esta identidad fue elegida a propósito, no asignada por defecto
+  const a = actorInfo(id);
+  STATE.espacio = a.tipo==="Familia" ? "fam" : "esc";
+  pushTrace(`Actor de demostración cambiado a: ${a.nombre} (${a.rolLabel}).`, "acceso");
+  closeModal();
+  toast(`Actor activo: ${a.nombre}.`);
   goTo("mis-procesos");
 }
 
@@ -581,12 +820,12 @@ function chooseEspacio(id){
 // ============================================================
 function screenMisProcesos(){
   const f = STATE.params.filtro || "todos";
+  const actor = actorInfo(STATE.actor);
   let procesos = DATA.procesos.slice();
-  if(STATE.espacio==="esc"){
-    // Del lado Escuela, solo se listan Procesos con una Autorización vigente cuyo objeto sea ese Proceso —
-    // nunca todos los Procesos por defecto (Fase 5, Pantalla 3; Fase 6, Principio 2).
-    const objetosAutorizados = new Set(DATA.autorizaciones.filter(a=>a.estado==="vigente").map(a=>a.objeto));
-    procesos = procesos.filter(p=>objetosAutorizados.has("Proceso "+p.id));
+  if(actor.id!=="fam"){
+    // Del lado Escuela/Colaborador, solo se listan Procesos con una Autorización VIGENTE para ESTE actor específico —
+    // nunca todos los Procesos por defecto (Fase 5, Pantalla 3; Fase 6, Principio 2; Punto de Auditoría 22).
+    procesos = procesos.filter(p=>autorizacionVigentePara(actor.id, "Proceso "+p.id));
   }
   if(f==="activo") procesos = procesos.filter(p=>p.estado==="activo");
   if(f==="cerrado") procesos = procesos.filter(p=>p.estado==="cerrado");
@@ -601,20 +840,28 @@ function screenMisProcesos(){
       </div>
       <p class="small">${p.espacio} · Creado ${fmt(p.creado)}${p.proximaRevision?` · Próxima revisión ${fmt(p.proximaRevision)}`:""}</p>
     </div>
-  `).join("") || `<div class="empty-state">${STATE.espacio==="esc" ? "No tienes una Autorización vigente sobre ningún Proceso todavía." : "No hay Procesos con este filtro todavía."}</div>`;
+  `).join("") || `<div class="empty-state">${actor.id!=="fam" ? "No tienes una Autorización vigente sobre ningún Proceso todavía." : "No hay Procesos con este filtro todavía."}</div>`;
 
   return `
     <h1>Mis Procesos</h1>
     <p class="muted small" style="margin-bottom:16px;">Lista de Procesos a los que tienes acceso vigente. No es posible ordenar ni buscar por nombre de Persona acompañada.</p>
-    ${STATE.espacio==="esc" ? `<div class="banner banner-info">Como Escuela, solo ves los Procesos donde tienes una Autorización vigente — nunca todos los Procesos de la Familia.</div>` : ""}
+    ${actor.id!=="fam" ? `<div class="banner banner-info">Como ${actor.rolLabel.toLowerCase()}, solo ves los Procesos donde <b>tú</b> tienes una Autorización vigente — nunca todos los Procesos de la Familia.</div>` : ""}
     <div class="btn-row" style="margin-bottom:16px;">
       <button class="tab ${f==='todos'?'active':''}" onclick="goTo('mis-procesos',{filtro:'todos'})">Todos</button>
       <button class="tab ${f==='activo'?'active':''}" onclick="goTo('mis-procesos',{filtro:'activo'})">Activos</button>
       <button class="tab ${f==='cerrado'?'active':''}" onclick="goTo('mis-procesos',{filtro:'cerrado'})">Cerrados</button>
       <span style="flex:1"></span>
-      <button class="btn btn-primary" onclick="abrirCrearProceso()">+ Crear Proceso nuevo</button>
+      ${(actor.id==="fam"||actor.id==="docA") ? `<button class="btn btn-primary" onclick="abrirCrearProceso()">+ Crear Proceso nuevo</button>` : ""}
     </div>
     ${cards}
+    <div class="card" style="margin-top:20px; border-style:dashed;">
+      <b class="small" style="text-transform:uppercase; color:#7A5A1B;">Modo prueba — solo prototipo</b>
+      <p class="small muted">Intentar abrir un Proceso directamente, sin pasar por esta lista, para comprobar qué ocurre si no tienes permiso.</p>
+      <div class="btn-row">
+        ${DATA.procesos.map(p=>`<button class="btn btn-secondary btn-sm" onclick="goTo('proceso',{id:'${p.id}', tab:'situacion'})">Intentar abrir ${p.id}</button>`).join("")}
+      </div>
+    </div>
+
   `;
 }
 
@@ -694,15 +941,41 @@ function guardarProceso(){
 function screenDetalleProceso(){
   const p = currentProceso();
   if(!p) return `<div class="empty-state">Este Proceso ya no está disponible.</div>`;
+
+  const actor = actorInfo(STATE.actor);
+  if(!autorizacionVigentePara(actor.id, "Proceso "+p.id)){
+    // El contenido del Proceso NUNCA se construye para un actor sin permiso vigente — no solo se oculta visualmente.
+    const rel = autorizacionRelevantePara(actor.id, "Proceso "+p.id);
+    let motivo = "Nunca has tenido una Autorización sobre este Proceso.";
+    if(rel && rel.estado==="revocada") motivo = `Tuviste una Autorización sobre este Proceso, pero fue revocada el ${fmt(rel.revocadaEl)}.`;
+    else if(rel && rel.estado==="vigencia_perdida") motivo = `Tu Autorización perdió vigencia (${rel.motivoPerdida}) el ${fmt(rel.fechaPerdida)}.`;
+    else if(rel && vigenciaInfo(rel).cls==="vencida") motivo = `Tuviste una Autorización sobre este Proceso, pero venció el ${fmt(addDays(rel.inicio, rel.vigenciaDias))}.`;
+    pushTrace(`Acceso denegado: ${actor.nombre} (${actor.rolLabel}) intentó abrir el Proceso ${p.id} sin Autorización vigente. ${motivo}`, "acceso");
+    return `
+      ${breadcrumb([{label:"Mis Procesos", screen:"mis-procesos"},{label:"Acceso denegado"}])}
+      <div class="card" style="border-color:var(--rojo);">
+        <span class="chip chip-vencida">Acceso denegado</span>
+        <h1 style="margin-top:10px;">No tienes permiso para ver o modificar esto</h1>
+        <p>${motivo}</p>
+        <p class="small muted">El contenido de este Proceso no se muestra hasta comprobar una Autorización vigente — el permiso se comprueba al ejecutar la acción, no solo al mostrar el botón. Este intento quedó registrado.</p>
+        <div class="btn-row">
+          <button class="btn btn-secondary btn-sm" onclick="goTo('mis-procesos')">Volver a Mis Procesos</button>
+          ${actor.id==="fam" ? "" : `<button class="btn btn-secondary btn-sm" onclick="elegirActor('fam')" title="Herramienta exclusiva del prototipo">🎭 Cambiar a Familia (solo prototipo) y otorgar una Autorización</button>`}
+        </div>
+      </div>
+    `;
+  }
+
   const tab = STATE.params.tab || "situacion";
   const tabs = [
-    ["situacion","Situación"], ["observaciones","Observaciones"], ["estrategias","Estrategias"],
-    ["aprendizajes","Aprendizajes"], ["acuerdos","Acuerdos"], ["visualizaciones","Visualizaciones"]
+    ["situacion","Situación"], ["observaciones","Observaciones"], ["curricular","Referente curricular"],
+    ["estrategias","Estrategias"], ["aprendizajes","Aprendizajes"], ["acuerdos","Acuerdos"], ["visualizaciones","Visualizaciones"]
   ];
 
   let bodyHtml = "";
   if(tab==="situacion") bodyHtml = tabSituacion(p);
   else if(tab==="observaciones") bodyHtml = tabObservaciones(p);
+  else if(tab==="curricular") bodyHtml = tabCurricular(p);
   else if(tab==="estrategias") bodyHtml = tabEstrategias(p);
   else if(tab==="aprendizajes") bodyHtml = tabAprendizajes(p);
   else if(tab==="acuerdos") bodyHtml = tabAcuerdos(p);
@@ -799,6 +1072,7 @@ function tabObservaciones(p){
   const obs = DATA.observaciones[p.id] || [];
   const grupos = {}; obs.forEach(o=>{ (grupos["Situación fundacional"]=grupos["Situación fundacional"]||[]).push(o); });
   const puedeRegistrar = p.estado==="activo";
+  const historialAbierto = STATE.params.historialAbierto;
   return `
     <div class="btn-row" style="margin-bottom:12px;">
       ${puedeRegistrar
@@ -814,18 +1088,72 @@ function tabObservaciones(p){
             <span class="small">${fmt(o.fecha)}</span>
           </div>
           <p style="margin-top:8px;">${o.descripcion}</p>
-          ${o.voz ? `<div class="nota-ternura" style="margin-top:10px;"><span class="txt">"${o.voz}"</span></div>` : ""}
-          <div class="btn-row"><button class="btn btn-text btn-sm" onclick="abrirCompartir('Observación','${o.id}')">Compartir</button></div>
+          ${o.voz ? `<div class="nota-ternura" style="margin-top:8px;"><span class="txt">Voz de la persona: "${o.voz}"</span></div>` : ""}
+          <div class="btn-row">
+            <button class="btn btn-text btn-sm" onclick="abrirCompartir('Observación','${o.id}')">Compartir</button>
+            <button class="btn btn-text btn-sm" onclick="abrirCorregirObservacion('${p.id}','${o.id}')">Corregir</button>
+            <button class="btn btn-text btn-sm" onclick="goTo('proceso',{id:'${p.id}', tab:'observaciones', historialAbierto:'${historialAbierto===o.id?'':o.id}'})">${historialAbierto===o.id?'Ocultar historial':'Ver historial'}</button>
+          </div>
+          ${historialAbierto===o.id ? panelHistorial(o.id) : ""}
         </div>`).join("")}
     `).join("") || `<div class="empty-state">Aún no hay Observaciones en este Proceso.</div>`}
   `;
 }
+function panelHistorial(entidadId){
+  const hist = DATA_HISTORIAL[entidadId] || [];
+  return `
+    <div style="border-top:1px solid var(--gris-100); margin-top:10px; padding-top:10px;">
+      <div class="section-label">Historial de esta entidad</div>
+      ${hist.length===0 ? `<p class="small muted">Sin correcciones registradas. La versión actual es la original.</p>` : hist.map((v,i)=>`
+        <div class="small" style="margin-bottom:8px; padding-bottom:8px; ${i<hist.length-1?'border-bottom:1px dashed var(--gris-300);':''}">
+          <b>${fmt(v.fecha)}</b> — ${v.accion} — <span class="muted">${v.actor}</span>
+          <p style="margin:4px 0;">${v.contenido}</p>
+          ${i<hist.length-1 ? `<button class="btn btn-text btn-sm" onclick="recuperarVersion('${entidadId}', ${i})">Recuperar esta versión</button>` : `<span class="chip chip-activo">Versión vigente</span>`}
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+function abrirCorregirObservacion(pid, oid){
+  const o = (DATA.observaciones[pid]||[]).find(x=>x.id===oid);
+  openModal(`
+    <h2>Corregir Observación</h2>
+    <p class="small muted">La corrección queda registrada con trazabilidad; la versión anterior no se borra, queda disponible en el historial.</p>
+    <div class="field"><label>Descripción corregida <span class="req">*</span></label><textarea id="in-corr-obs">${o.descripcion}</textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarCorreccion('${pid}','${oid}')">Guardar corrección</button>
+    </div>
+  `);
+}
+function guardarCorreccion(pid, oid){
+  const nuevo = document.getElementById("in-corr-obs").value.trim();
+  if(!nuevo){ toast("La descripción no puede quedar vacía."); return; }
+  const o = (DATA.observaciones[pid]||[]).find(x=>x.id===oid);
+  DATA_HISTORIAL[oid] = DATA_HISTORIAL[oid] || [{fecha:o.fecha, actor:"(registro original)", accion:"Registro original", contenido:o.descripcion}];
+  o.descripcion = nuevo;
+  DATA_HISTORIAL[oid].push({fecha:todayISO(), actor:actorInfo(STATE.actor).nombre, accion:"Corrección de error de captura", contenido:nuevo});
+  pushTrace(`Observación ${oid} corregida. Versión anterior conservada en el historial (no se sobrescribió silenciosamente).`, "modificacion");
+  closeModal(); toast("Observación corregida.");
+  goTo("proceso", {id:pid, tab:"observaciones", historialAbierto:oid});
+}
+function recuperarVersion(entidadId, idx){
+  const hist = DATA_HISTORIAL[entidadId];
+  const version = hist[idx];
+  // Recuperar NO sobrescribe silenciosamente: se agrega una nueva versión "recuperada", el historial anterior se conserva íntegro
+  hist.push({fecha:todayISO(), actor:actorInfo(STATE.actor).nombre, accion:`Versión recuperada (de la del ${fmt(version.fecha)})`, contenido:version.contenido});
+  for(const pid in DATA.observaciones){
+    const o = DATA.observaciones[pid].find(x=>x.id===entidadId);
+    if(o){ o.descripcion = version.contenido; pushTrace(`Se recuperó una versión anterior de ${entidadId}, preservando la trazabilidad completa.`, "modificacion"); toast("Versión recuperada."); render(); return; }
+  }
+}
+
 function abrirRegistrarObservacion(pid){
   openModal(`
     <h2>Registrar Observación</h2>
     ${notaTernura("¿Qué le está pasando a esta persona — no solo qué está haciendo?")}
     <div class="field" id="f-obs"><label>Descripción de lo ocurrido <span class="req">*</span></label><textarea id="in-obs"></textarea><div class="errtext">Falta describir la situación antes de guardar.</div></div>
-    <div class="field"><label>Voz de la persona acompañada <span class="small muted">(opcional)</span></label><textarea id="in-obs-voz" placeholder="¿Qué dijo o mostró, con sus propias palabras o gestos?"></textarea><div class="help">Un espacio para lo que ella misma expresó — no solo lo que el adulto observó.</div></div>
+    <div class="field"><label>Voz de la persona acompañada <span class="small muted">(opcional)</span></label><textarea id="in-obs-voz" placeholder="¿Qué dijo o mostró, con sus propias palabras o gestos?"></textarea><div class="help">Lo que ella misma expresó — distinto de la descripción y de cualquier interpretación del adulto. No es un diagnóstico ni una cita reconstruida.</div></div>
     <div class="field"><label>Fecha</label><input type="date" id="in-obs-fecha" value="${todayISO()}"></div>
     <p class="small muted">Perspectiva de origen: <b>${STATE.espacio==='esc'?'Escuela':'Familia'}</b> (asignada automáticamente).</p>
     <div class="modal-actions">
@@ -838,10 +1166,12 @@ function guardarObservacion(pid){
   const desc = document.getElementById("in-obs").value.trim();
   if(!desc){ document.getElementById("f-obs").classList.add("err"); return; }
   const id = "O" + (Math.floor(Math.random()*9000)+1000);
+  const fecha = document.getElementById("in-obs-fecha").value;
   const voz = document.getElementById("in-obs-voz").value.trim();
   DATA.observaciones[pid] = DATA.observaciones[pid] || [];
-  DATA.observaciones[pid].unshift({id, fecha:document.getElementById("in-obs-fecha").value, perspectiva: STATE.espacio==='esc'?'Escuela':'Familia', descripcion:desc, voz});
-  pushTrace(`Observación registrada en Proceso ${pid}.`);
+  DATA.observaciones[pid].unshift({id, fecha, perspectiva: actorInfo(STATE.actor).tipo, descripcion:desc, voz});
+  DATA_HISTORIAL[id] = [{fecha, actor:actorInfo(STATE.actor).nombre, accion:"Registro original", contenido:desc}];
+  pushTrace(`Observación registrada en Proceso ${pid}.`, "acceso");
   closeModal(); toast("Observación guardada.");
   render();
 }
@@ -855,6 +1185,7 @@ function tabEstrategias(p){
   const ests = DATA.estrategias[p.id] || [];
   const abiertaId = STATE.params.estrategiaAbierta;
   return `
+    <div class="banner banner-neutral">Una Estrategia es algo que se propone y se explora para esta Situación: se puede intentar, ajustar, poner en pausa o cerrar, y los Resultados registran qué ocurrió cada vez que se probó. (Un Acuerdo, en cambio, es lo que ambas partes proponen y confirman juntas — puedes ver la diferencia en la pestaña Acuerdos.)</div>
     <div class="btn-row" style="margin-bottom:12px;">
       <button class="btn btn-primary btn-sm" onclick="abrirProponerEstrategia('${p.id}')">Proponer Estrategia</button>
     </div>
@@ -982,6 +1313,7 @@ function abrirProponerAprendizaje(pid){
   const obs = (DATA.observaciones[pid]||[]).concat();
   openModal(`
     <h2>Proponer Aprendizaje</h2>
+    ${notaTernura("Un aprendizaje se construye con evidencia y tiempo — no se declara sobre alguien de una sola vez.")}
     <div class="field" id="f-apr"><label>Descripción <span class="req">*</span></label><textarea id="in-apr"></textarea><div class="errtext">Falta la descripción.</div></div>
     <div class="field" id="f-apr-ev">
       <label>Evidencia vinculada (al menos una) <span class="req">*</span></label>
@@ -1043,7 +1375,8 @@ function reconsiderarAprendizaje(pidOrigen, aprId){
 function tabAcuerdos(p){
   const ags = DATA.acuerdos[p.id] || [];
   return `
-    <div class="btn-row" style="margin-bottom:12px;"><button class="btn btn-primary btn-sm" onclick="toast('Prototipo: formulario de Acuerdo equivalente al de Estrategia/Aprendizaje ya demostrado.')">Proponer Acuerdo</button></div>
+    <div class="banner banner-neutral">Un Acuerdo es lo que ambas partes proponen y confirman juntas: requiere que la otra parte lo confirme, y se le puede dar seguimiento con el tiempo. (Una Estrategia, en cambio, es algo que se explora — puedes ver la diferencia en la pestaña Estrategias.)</div>
+    <div class="btn-row" style="margin-bottom:12px;"><button class="btn btn-primary btn-sm" onclick="abrirProponerAcuerdo('${p.id}')">Proponer Acuerdo</button></div>
     ${ags.map(a=>`
       <div class="card">
         <div style="display:flex; justify-content:space-between; gap:8px;">
@@ -1053,10 +1386,53 @@ function tabAcuerdos(p){
         <div class="section-label">Seguimiento</div>
         ${a.seguimientos.map(s=>`<div class="small">${fmt(s.fecha)} — ${s.descripcion}</div>`).join("") || `<p class="small muted">Sin seguimientos todavía.</p>`}
         <div class="btn-row">
+          <button class="btn btn-text btn-sm" onclick="abrirRegistrarSeguimiento('${p.id}','${a.id}')">Registrar seguimiento</button>
           <button class="btn btn-text btn-sm" onclick="solicitarCancelacionAcuerdo('${a.id}')">Solicitar cancelación</button>
         </div>
       </div>`).join("") || `<div class="empty-state">Aún no hay Acuerdos en este Proceso.</div>`}
   `;
+}
+function abrirProponerAcuerdo(pid){
+  openModal(`
+    <h2>Proponer Acuerdo</h2>
+    ${notaTernura("Un acuerdo se construye entre las partes, con lo que cada quien puede sostener — no se impone.")}
+    <div class="field" id="f-acu"><label>Contenido del Acuerdo <span class="req">*</span></label><textarea id="in-acu" placeholder="¿Qué se acuerda hacer, y entre quiénes?"></textarea><div class="errtext">Falta describir el Acuerdo.</div></div>
+    <p class="small muted">Queda \"propuesto\" hasta que la otra parte lo confirme.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarAcuerdo('${pid}')">Proponer</button>
+    </div>
+  `);
+}
+function guardarAcuerdo(pid){
+  const contenido = document.getElementById("in-acu").value.trim();
+  if(!contenido){ document.getElementById("f-acu").classList.add("err"); return; }
+  const id = "AC" + (Math.floor(Math.random()*9000)+1000);
+  DATA.acuerdos[pid] = DATA.acuerdos[pid] || [];
+  DATA.acuerdos[pid].unshift({id, estado:"Propuesto", contenido, seguimientos:[]});
+  pushTrace(`Acuerdo ${id} propuesto en Proceso ${pid}.`, "acceso");
+  closeModal(); toast("Acuerdo propuesto.");
+  render();
+}
+function abrirRegistrarSeguimiento(pid, aid){
+  openModal(`
+    <h2>Registrar Seguimiento</h2>
+    <div class="field" id="f-seg"><label>Descripción <span class="req">*</span></label><textarea id="in-seg"></textarea><div class="errtext">Falta la descripción.</div></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarSeguimiento('${pid}','${aid}')">Guardar</button>
+    </div>
+  `);
+}
+function guardarSeguimiento(pid, aid){
+  const desc = document.getElementById("in-seg").value.trim();
+  if(!desc){ document.getElementById("f-seg").classList.add("err"); return; }
+  const a = (DATA.acuerdos[pid]||[]).find(x=>x.id===aid);
+  a.seguimientos.push({fecha:todayISO(), descripcion:desc});
+  a.estado = "Con seguimiento";
+  pushTrace(`Seguimiento registrado en Acuerdo ${aid}.`, "acceso");
+  closeModal(); toast("Seguimiento registrado.");
+  render();
 }
 function solicitarCancelacionAcuerdo(id){
   confirmModal({
@@ -1066,6 +1442,223 @@ function solicitarCancelacionAcuerdo(id){
     onConfirm:()=>{ pushTrace(`Solicitud de cancelación registrada para el Acuerdo ${id}.`); toast("Cancelación solicitada."); }
   });
 }
+
+// ---- Tab: Visualizaciones ----
+// ---- Tab: Referente curricular (Fase 8.3) ----
+// Modelo respetado (encargo, sección 24-25): PERSONA → SITUACIÓN → CONTEXTO → OBSERVACIÓN →
+// REFERENTE CURRICULAR. Esta pestaña es una sección diferenciada, nunca sustituye ni se mezcla
+// con Situación/Contexto/Observación. El motor es determinista: todo texto proviene del catálogo
+// remoto (CurriculumService); nada se genera, parafrasea ni infiere aquí.
+function tabCurricular(p){
+  window._currSel = { procesoId: p.id, campoIds:[], pdaIds:[], ejeIds:[] };
+  return `
+    <div class="banner banner-neutral">Un Referente curricular es opcional y distinto de la Situación, el Contexto y las Observaciones: vincula (si corresponde) este Proceso con el Plan de Estudio 2022 — nunca convierte automáticamente el lenguaje cotidiano en una categoría curricular.</div>
+    <div id="curricular-body"><p class="small muted">Cargando catálogo curricular…</p></div>
+  `;
+}
+async function cargarPanelCurricular(procesoId){
+  const cont = document.getElementById("curricular-body");
+  if(!cont) return;
+  try{
+    const [fases, campos, ejes] = await Promise.all([getFases(), getCamposFormativos(), getEjesArticuladores()]);
+    const estado = getCurriculumEstadoConexion();
+    const p = DATA.procesos.find(x=>x.id===procesoId);
+    const guardado = p.referenteCurricular;
+    cont.innerHTML = `
+      ${estado.actualizacionPendiente ? `<div class="banner banner-warn">Hay una actualización del catálogo curricular pendiente (versión ${estado.actualizacionPendiente.versionNueva}) que no pudo completarse; se sigue usando la versión ${estado.versionActiva} sin mezclar datos de ambas.</div>` : ""}
+      <p class="small muted">Catálogo: curriculo-primaria-nem · versión ${estado.versionActiva||"desconocida"} · Fuente operativa: ${CURRICULUM_FUENTE.fuenteOperativa} — esta NO es la fuente normativa oficial de la SEP, es un catálogo operativo derivado.</p>
+      ${guardado ? `
+        <div class="card">
+          <b>Referente curricular guardado</b>
+          <div class="dl">
+            <dt>Grado</dt><dd>${guardado.gradoTexto}</dd>
+            <dt>Campo(s)</dt><dd>${guardado.campoTextos.join(", ")}</dd>
+            <dt>Contenido</dt><dd>${guardado.contenidoTexto||"—"}</dd>
+            <dt>PDA</dt><dd>${(guardado.pdaTextos||[]).join(" · ")||"—"}</dd>
+            <dt>Eje(s)</dt><dd>${(guardado.ejeTextos||[]).join(", ")||"—"}</dd>
+            <dt>Proyecto</dt><dd>${guardado.proyectoTitulo||"—"}</dd>
+          </div>
+          <button class="btn btn-text btn-sm" onclick="quitarReferenteCurricular('${procesoId}')">Quitar Referente curricular</button>
+        </div>` : `<p class="small muted">Este Proceso todavía no tiene un Referente curricular. Es opcional.</p>`}
+      <div class="field"><label>Fase</label><select id="cs-fase" onchange="onCambiaFaseCurricular('${procesoId}')">
+        <option value="">Selecciona una Fase</option>
+        ${fases.map(f=>`<option value="${f.id}">${f.nombre} (${f.grados.join(', ')})</option>`).join("")}
+      </select></div>
+      <div class="field"><label>Grado</label><select id="cs-grado" disabled onchange="onCambiaGradoCurricular('${procesoId}')"><option value="">Elige primero una Fase</option></select></div>
+      <div class="field"><label>Campo(s) formativo(s) <span class="small muted">(puedes elegir más de uno; el primero que marques se usa para buscar Contenido)</span></label>
+        <div>${campos.map(c=>`<label class="small" style="display:block;"><input type="checkbox" value="${c.id}" data-nombre="${c.nombre}" onchange="onCambiaCamposCurricular('${procesoId}')"> ${c.nombre}</label>`).join("")}</div>
+      </div>
+      <div id="cs-contenido-wrap" class="field" style="display:none;"><label>Contenido</label><select id="cs-contenido" onchange="onCambiaContenidoCurricular('${procesoId}')"></select></div>
+      <div id="cs-pda-wrap" style="display:none;"><div class="section-label">PDA de este Contenido (puedes marcar más de uno)</div><div id="cs-pdas"></div></div>
+      <div class="field"><label>Eje(s) articulador(es) <span class="small muted">(opcional, nunca asignado automáticamente)</span></label>
+        <div>${ejes.map(e=>`<label class="small" style="display:block;"><input type="checkbox" value="${e.id}" data-nombre="${e.nombre}" class="cs-eje" onchange="onCambiaEjesCurricular()"> ${e.nombre}</label>`).join("")}</div>
+      </div>
+      <div id="cs-proyecto-toggle" class="field" style="display:none;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="mostrarProyectosDelGrado('${procesoId}')">Ver proyectos posibles para este Grado (opcional)</button>
+        <p class="small muted">No se consulta el catálogo de Proyectos hasta que pidas verlo — no es obligatorio para guardar un Referente curricular.</p>
+      </div>
+      <div id="cs-proyecto-wrap" class="field" style="display:none;"><label>Proyecto <span class="small muted">(opcional — solo si es un referente explícito de este Proceso)</span></label><select id="cs-proyecto" onchange="onCambiaProyectoCurricular()"><option value="">Ninguno</option></select></div>
+      <div id="cs-proyecto-detalle"></div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="guardarReferenteCurricular('${procesoId}')">Guardar Referente curricular</button></div>
+    `;
+  } catch(e){
+    const p = DATA.procesos.find(x=>x.id===procesoId);
+    cont.innerHTML = `
+      <div class="banner banner-warn">Catálogo curricular no disponible sin conexión. El resto de este Proceso (Situación, Observaciones, Estrategias, Aprendizajes, Acuerdos) sigue funcionando con normalidad — solo esta sección depende del catálogo remoto.</div>
+      ${p.referenteCurricular ? `<p class="small">Ya existe un Referente curricular guardado para este Proceso; permanece visible aunque el catálogo no esté disponible ahora mismo.</p>
+        <div class="card"><div class="dl"><dt>Grado</dt><dd>${p.referenteCurricular.gradoTexto}</dd><dt>Campo(s)</dt><dd>${p.referenteCurricular.campoTextos.join(", ")}</dd></div></div>` : ""}
+    `;
+  }
+}
+async function onCambiaFaseCurricular(procesoId){
+  const faseId = document.getElementById("cs-fase").value;
+  const selGrado = document.getElementById("cs-grado");
+  if(!faseId){ selGrado.disabled = true; selGrado.innerHTML = `<option value="">Elige primero una Fase</option>`; return; }
+  try{
+    const grados = await getGrados();
+    const delaFase = grados.filter(g=>g.fase_id===faseId);
+    selGrado.disabled = false;
+    selGrado.innerHTML = `<option value="">Selecciona un Grado</option>` + delaFase.map(g=>`<option value="${g.id}">${g.grado}</option>`).join("");
+  } catch(e){
+    selGrado.disabled = true;
+    selGrado.innerHTML = `<option value="">No disponible sin conexión</option>`;
+  }
+}
+function onCambiaGradoCurricular(procesoId){
+  window._currSel.gradoId = document.getElementById("cs-grado").value;
+  document.getElementById("cs-contenido-wrap").style.display = "none";
+  document.getElementById("cs-pda-wrap").style.display = "none";
+  // Proyectos.json (226 KB) NUNCA se descarga solo por elegir un Grado — se muestra un botón
+  // explícito; el fetch solo ocurre si la persona usuaria realmente pide ver los proyectos.
+  const toggle = document.getElementById("cs-proyecto-toggle");
+  toggle.style.display = window._currSel.gradoId ? "block" : "none";
+  document.getElementById("cs-proyecto-wrap").style.display = "none";
+  document.getElementById("cs-proyecto-detalle").innerHTML = "";
+  onCambiaCamposCurricular(procesoId);
+}
+async function mostrarProyectosDelGrado(procesoId){
+  document.getElementById("cs-proyecto-toggle").style.display = "none";
+  await cargarProyectosDelGrado(procesoId);
+}
+async function onCambiaCamposCurricular(procesoId){
+  // Recolecta todos los checkboxes de campos formativos marcados (no los de ejes).
+  const checks = Array.from(document.querySelectorAll('#curricular-body input[type=checkbox][data-nombre]')).filter(c=>!c.classList.contains("cs-eje"));
+  const seleccionados = checks.filter(c=>c.checked);
+  window._currSel.campoIds = seleccionados.map(c=>c.value);
+  window._currSel.campoTextos = seleccionados.map(c=>c.dataset.nombre);
+  const wrap = document.getElementById("cs-contenido-wrap");
+  const gradoId = window._currSel.gradoId;
+  if(!gradoId || seleccionados.length===0){ wrap.style.display="none"; document.getElementById("cs-pda-wrap").style.display="none"; return; }
+  const campoIdParaContenido = seleccionados[0].value;
+  window._currSel.campoIdPrincipal = campoIdParaContenido;
+  const sel = document.getElementById("cs-contenido");
+  wrap.style.display = "block";
+  try{
+    const contenidos = await getContenidos(gradoId, campoIdParaContenido);
+    sel.innerHTML = contenidos.length
+      ? `<option value="">Selecciona un Contenido</option>` + contenidos.map(c=>`<option value="${c.id}">${c.texto}</option>`).join("")
+      : `<option value="">No hay Contenidos para este Grado y Campo en el catálogo</option>`;
+  } catch(e){
+    sel.innerHTML = `<option value="">No disponible sin conexión</option>`;
+  }
+  document.getElementById("cs-pda-wrap").style.display = "none";
+}
+async function onCambiaContenidoCurricular(procesoId){
+  const contenidoId = document.getElementById("cs-contenido").value;
+  window._currSel.contenidoId = contenidoId;
+  const wrapPda = document.getElementById("cs-pda-wrap");
+  if(!contenidoId){ wrapPda.style.display="none"; return; }
+  wrapPda.style.display = "block";
+  document.getElementById("cs-pdas").innerHTML = `<p class="small muted">Cargando PDA…</p>`;
+  try{
+    const pdas = await getPdas(window._currSel.gradoId, window._currSel.campoIdPrincipal, contenidoId);
+    document.getElementById("cs-pdas").innerHTML = pdas.length
+      ? pdas.map(pd=>`<label class="small" style="display:block; margin-bottom:6px;"><input type="checkbox" value="${pd.registro_id}" data-texto="${escapeHtml(pd.pda)}" class="cs-pda"> ${pd.pda}</label>`).join("")
+      : `<p class="small muted">Este Contenido no tiene PDA asociados en el catálogo (puede ser una incidencia documentada de la fuente).</p>`;
+  } catch(e){
+    // Fallo aislado a esta pieza específica (p. ej. contenido-pda.json o pdas.json inalcanzable):
+    // nunca debe quedar en blanco en silencio, ni propagar una excepción hacia el resto de la app.
+    document.getElementById("cs-pdas").innerHTML = `<p class="small" style="color:var(--rojo);">No se pudieron cargar los PDA de este Contenido (catálogo no disponible en este momento). El resto del Proceso no se ve afectado.</p>`;
+  }
+}
+function onCambiaEjesCurricular(){
+  const marcados = Array.from(document.querySelectorAll('#curricular-body .cs-eje:checked'));
+  window._currSel.ejeIds = marcados.map(c=>c.value);
+  window._currSel.ejeTextos = marcados.map(c=>c.dataset.nombre);
+}
+async function cargarProyectosDelGrado(procesoId){
+  const wrap = document.getElementById("cs-proyecto-wrap");
+  const gradoId = window._currSel.gradoId;
+  if(!gradoId){ wrap.style.display="none"; return; }
+  wrap.style.display = "block";
+  const sel = document.getElementById("cs-proyecto");
+  sel.innerHTML = `<option value="">Cargando…</option>`;
+  try{
+    const proyectos = await getProyectos(gradoId);
+    sel.innerHTML = `<option value="">Ninguno</option>` + proyectos.map(pr=>`<option value="${pr.proyecto_id}">${pr.titulo}</option>`).join("");
+  } catch(e){
+    sel.innerHTML = `<option value="">Proyectos no disponibles sin conexión</option>`;
+  }
+}
+async function onCambiaProyectoCurricular(){
+  const proyectoId = document.getElementById("cs-proyecto").value;
+  window._currSel.proyectoId = proyectoId;
+  const detalle = document.getElementById("cs-proyecto-detalle");
+  if(!proyectoId){ detalle.innerHTML=""; window._currSel.proyectoTitulo=null; return; }
+  const sel = document.getElementById("cs-proyecto");
+  window._currSel.proyectoTitulo = sel.options[sel.selectedIndex].textContent;
+  detalle.innerHTML = `<p class="small muted">Cargando detalle del proyecto…</p>`;
+  try{
+    const [ejesP, propositos, incidencias] = await Promise.all([
+      getProyectoEjes(proyectoId), getProyectoProposito(proyectoId), getDiscrepanciasYIncidencias()
+    ]);
+    const incidenciaDeEste = incidencias.incidenciasProyectos.filter(i=>i.proyecto_id===proyectoId);
+    detalle.innerHTML = `
+      <div class="card dim">
+        <p class="small"><b>Ejes del proyecto (catálogo):</b> ${ejesP.map(e=>e.nombre).join(", ")||"—"}</p>
+        ${propositos.map(pp=>`<p class="small"><b>Propósito (catálogo):</b> ${pp.proposito}</p>`).join("")}
+        ${incidenciaDeEste.length ? `<div class="banner banner-warn small">Este proyecto tiene una incidencia documentada en la fuente (${incidenciaDeEste[0].estado}) — se muestra tal como está registrada, sin corregirla.</div>` : ""}
+    </div>
+  `;
+  } catch(e){
+    detalle.innerHTML = `<p class="small" style="color:var(--rojo);">No se pudo cargar el detalle de este proyecto (catálogo no disponible en este momento).</p>`;
+  }
+}
+function guardarReferenteCurricular(procesoId){
+  const s = window._currSel || {};
+  if(!s.gradoId || !(s.campoIds&&s.campoIds.length)){
+    toast("Selecciona al menos Grado y un Campo formativo para guardar el Referente curricular.");
+    return;
+  }
+  const p = DATA.procesos.find(x=>x.id===procesoId);
+  const gradoSel = document.getElementById("cs-grado");
+  const gradoTexto = gradoSel.options[gradoSel.selectedIndex]?.textContent || s.gradoId;
+  const contenidoSel = document.getElementById("cs-contenido");
+  const contenidoTexto = (s.contenidoId && contenidoSel) ? contenidoSel.options[contenidoSel.selectedIndex].textContent : null;
+  const pdaTextos = Array.from(document.querySelectorAll('#curricular-body .cs-pda:checked')).map(c=>c.dataset.texto);
+  p.referenteCurricular = {
+    faseId: document.getElementById("cs-fase").value,
+    gradoId: s.gradoId, gradoTexto,
+    campoIds: s.campoIds, campoTextos: s.campoTextos||[],
+    contenidoId: s.contenidoId||null, contenidoTexto,
+    pdaIds: Array.from(document.querySelectorAll('#curricular-body .cs-pda:checked')).map(c=>c.value),
+    pdaTextos,
+    ejeIds: s.ejeIds||[], ejeTextos: s.ejeTextos||[],
+    proyectoId: s.proyectoId||null, proyectoTitulo: s.proyectoTitulo||null,
+    version: getCurriculumEstadoConexion().versionActiva,
+  };
+  pushTrace(`Referente curricular guardado en Proceso ${procesoId} (catálogo v${p.referenteCurricular.version}).`, "modificacion");
+  toast("Referente curricular guardado.");
+  cargarPanelCurricular(procesoId);
+}
+function quitarReferenteCurricular(procesoId){
+  const p = DATA.procesos.find(x=>x.id===procesoId);
+  p.referenteCurricular = null;
+  pushTrace(`Referente curricular retirado del Proceso ${procesoId}.`, "modificacion");
+  toast("Referente curricular retirado.");
+  cargarPanelCurricular(procesoId);
+}
+
 
 // ---- Tab: Visualizaciones ----
 function tabVisualizaciones(p){
@@ -1099,13 +1692,14 @@ function tabVisualizaciones(p){
 // PANTALLA 14 — PUENTE FAMILIA-ESCUELA
 // ============================================================
 function screenPuente(){
+  const visibles = conexionesVisiblesPara(STATE.actor);
   return `
     <h1>Puente Familia-Escuela</h1>
-    <div class="banner banner-info">Una conexión no da acceso a todo el contenido — solo a los elementos específicos que se comparten dentro de ella.</div>
+    <div class="banner banner-info">Una conexión no da acceso a todo el contenido — solo a los elementos específicos que se comparten dentro de ella. Aquí solo aparecen las Conexiones en las que tienes una relación autorizada; ninguna otra existe para ti en esta pantalla.</div>
     <div class="btn-row" style="margin-bottom:14px;">
       <button class="btn btn-primary" onclick="abrirSolicitarConexion()">Solicitar conexión</button>
     </div>
-    ${DATA.conexiones.map(c=>`
+    ${visibles.map(c=>`
       <div class="card">
         <div style="display:flex; justify-content:space-between; gap:8px;">
           <h3>${c.familiaLabel} ↔ ${c.escuelaLabel}</h3>
@@ -1117,7 +1711,7 @@ function screenPuente(){
           <button class="btn btn-danger btn-sm" onclick="revocarConexion('${c.id}')">Revocar Conexión</button>
         </div>
       </div>
-    `).join("")}
+    `).join("") || `<div class="empty-state">No tienes ninguna Conexión visible todavía. Solo aparecen aquí las Conexiones sobre Procesos donde tienes una Autorización vigente.</div>`}
   `;
 }
 function abrirSolicitarConexion(){
@@ -1136,6 +1730,15 @@ function enviarSolicitudConexion(){
   closeModal(); toast("Solicitud enviada.");
 }
 function revocarConexion(id){
+  // El permiso se comprueba AQUÍ, al ejecutar la acción — no solo al decidir si se muestra el botón.
+  // Esto bloquea también cualquier intento por una ruta alternativa (p. ej. llamar a esta función
+  // directamente), no únicamente el clic normal desde una tarjeta ya filtrada.
+  const c = DATA.conexiones.find(x=>x.id===id);
+  if(!actorPuedeVerConexion(STATE.actor, c)){
+    pushTrace(`Intento de acción denegado: ${actorInfo(STATE.actor).nombre} intentó revocar la Conexión ${id} sin una Autorización vigente sobre su Proceso.`, "acceso");
+    toast("No tienes permiso para modificar esta Conexión.");
+    return;
+  }
   confirmModal({
     title:"Revocar esta Conexión",
     body:"El acceso futuro se cierra. No podemos garantizar que se elimine una copia que la otra parte ya haya visto o guardado.",
@@ -1161,6 +1764,7 @@ function abrirCompartir(tipo, refId){
   const conexionesActivas = DATA.conexiones.filter(c=>c.estado==="Activa");
   openModal(`
     <h2>Compartir ${tipo}</h2>
+    ${notaTernura("Antes de compartir, piensa en quién lo va a leer y para qué lo necesita.")}
     <p class="small muted">${escapeHtml(resumen)}</p>
     <div class="field">
       <label>Conexión destinataria <span class="req">*</span></label>
@@ -1176,7 +1780,7 @@ function abrirCompartir(tipo, refId){
   `);
 }
 function confirmarCompartir(tipo, refId){
-  pushTrace(`${tipo} ${refId} compartido vía el Puente. La compartición no habilita a la otra parte a reenviarlo.`);
+  pushTrace(`${tipo} ${refId} compartido vía el Puente. La compartición no habilita a la otra parte a reenviarlo.`, "comparticion");
   closeModal();
   toast(`${tipo} compartido.`);
 }
@@ -1189,51 +1793,112 @@ function vigenciaInfo(a){
   const restantes = daysBetween(todayISO(), vence);
   let cls = "ok", label = `Vence en ${restantes} días (${fmt(vence)})`;
   if(a.estado==="revocada"){ cls="vencida"; label = `Revocada el ${fmt(a.revocadaEl)}`; }
+  else if(a.estado==="vigencia_perdida"){ cls="vencida"; label = `Vigencia perdida — ${a.motivoPerdida} (${fmt(a.fechaPerdida)})`; }
   else if(restantes<=0){ cls="vencida"; label = `Vencida el ${fmt(vence)}`; }
   else if(restantes<=15){ cls="pronto"; label = `Vence en ${restantes} días (${fmt(vence)})`; }
   const total = a.vigenciaDias;
   const transcurridos = Math.min(total, daysBetween(a.inicio, todayISO()));
-  const pct = a.estado==="revocada" ? 100 : Math.min(100, Math.round((transcurridos/total)*100));
+  const pct = (a.estado==="revocada"||a.estado==="vigencia_perdida") ? 100 : Math.min(100, Math.round((transcurridos/total)*100));
   return {cls, label, pct, vence};
 }
 function screenAutorizaciones(){
-  const otorgadas = DATA.autorizaciones;
+  const actor = actorInfo(STATE.actor);
+  const esFamilia = actor.id==="fam";
+  const otorgadas = esFamilia ? DATA.autorizaciones : DATA.autorizaciones.filter(a=>a.receptor.includes(actor.correo));
   return `
     <h1>Autorizaciones</h1>
+    ${esFamilia ? `
     <div class="btn-row" style="margin-bottom:14px;">
       <button class="btn btn-primary" onclick="abrirOtorgarAutorizacion()">Otorgar Autorización</button>
       <button class="btn btn-secondary" onclick="abrirSolicitarConsolidacion()">Solicitar Autorización de consolidación</button>
-    </div>
+    </div>` : `<p class="small muted" style="margin-bottom:14px;">Como ${actor.rolLabel.toLowerCase()}, ves únicamente las Autorizaciones que has recibido — nunca las de otros usuarios.</p>`}
+    ${otorgadas.length===0 ? `<div class="empty-state">No tienes ninguna Autorización registrada todavía.</div>` : ""}
     ${otorgadas.map(a=>{
       const v = vigenciaInfo(a);
+      const activa = a.estado==="vigente" && v.cls!=="vencida";
       return `
       <div class="card">
+        <p class="small" style="margin:0 0 8px; font-style:italic; color:var(--ternura);">Vigente porque: "${a.finalidad}"</p>
         <div class="dl">
           <dt>Otorgante</dt><dd>${a.otorgante}</dd>
           <dt>Receptor</dt><dd>${a.receptor}</dd>
           <dt>Objeto</dt><dd>${a.objeto}</dd>
         </div>
-        <p class="small muted" style="margin:6px 0 2px;">Vigente porque: <i>${a.finalidad}</i></p>
         <div class="vigencia ${v.cls}">
           <div class="bar"><div class="bar-fill" style="width:${v.pct}%"></div></div>
           <div class="vigencia-text">${v.label}</div>
         </div>
         <div class="btn-row">
-          ${a.estado!=="revocada" ? `<button class="btn btn-secondary btn-sm" onclick="renovarAutorizacion('${a.id}')">Renovar</button>
-                                       <button class="btn btn-danger btn-sm" onclick="revocarAutorizacion('${a.id}')">Revocar</button>` : `<span class="small muted">Revocada por ${a.revocadaPor}</span>`}
+          ${esFamilia && activa ? `<button class="btn btn-secondary btn-sm" onclick="renovarAutorizacion('${a.id}')">Renovar</button>
+                                       <button class="btn btn-danger btn-sm" onclick="revocarAutorizacion('${a.id}')">Revocar</button>` : ""}
+          ${!activa && a.estado==="revocada" ? `<span class="small muted">Revocada por ${a.revocadaPor}</span>` : ""}
+          ${!activa && a.estado==="vigencia_perdida" ? `<span class="small muted">${a.motivoPerdida}</span>` : ""}
         </div>
       </div>`;
     }).join("")}
   `;
 }
+// ============================================================
+// SELECTOR DE PERSONA INSTITUCIONAL VERIFICADA (reutilizable)
+// ============================================================
+// modo: "todas" (cualquier persona del directorio, para Autorización ordinaria)
+//       "facultada" (solo institucionales y previamente facultadas, para Autorización de consolidación)
+window._personSelState = {};
+function personSelectorHtml(fieldId, modo){
+  window._personSelState[fieldId] = window._personSelState[fieldId] || {seleccion:null, filtro:""};
+  return `
+    <div class="field">
+      <label>Receptor específico <span class="req">*</span></label>
+      <input type="text" placeholder="Buscar por nombre o correo…" oninput="filtrarPersonas('${fieldId}','${modo}', this.value)">
+      <div class="help">Solo personas verificadas — nunca un rol o cargo genérico ("docente", "director", "escuela"). Dominios reconocidos: @aefcm.gob.mx y @docente.aefcm.gob.mx.</div>
+      <div id="${fieldId}-list" style="margin-top:8px; max-height:200px; overflow:auto;"></div>
+      <div id="${fieldId}-selected" class="small" style="margin-top:6px; font-weight:600;"></div>
+    </div>
+  `;
+}
+function personasFiltradas(modo, filtro){
+  let lista = PERSONAS_VERIFICADAS;
+  if(modo==="facultada") lista = lista.filter(p=>p.institucional && p.facultada);
+  if(filtro){
+    const f = filtro.toLowerCase();
+    lista = lista.filter(p=>p.nombre.toLowerCase().includes(f) || p.correo.toLowerCase().includes(f));
+  }
+  return lista;
+}
+function filtrarPersonas(fieldId, modo, filtro){
+  window._personSelState[fieldId].filtro = filtro;
+  renderPersonList(fieldId, modo);
+}
+function renderPersonList(fieldId, modo){
+  const lista = personasFiltradas(modo, window._personSelState[fieldId].filtro);
+  const el = document.getElementById(fieldId+"-list");
+  if(!el) return;
+  el.innerHTML = lista.map(p=>`
+    <div class="card clickable" style="padding:8px 10px; margin-bottom:6px;" onclick="seleccionarPersona('${fieldId}','${p.id}')">
+      <div style="display:flex; justify-content:space-between; gap:8px;">
+        <b class="small">${p.nombre}</b>
+        <span class="small" style="color:var(--verde); font-weight:600;">✓ Identidad verificada — entorno demostrativo</span>
+      </div>
+      <div class="small muted">${p.correo} · ${p.institucion}</div>
+      <div class="small muted">${p.contexto}</div>
+      ${modo==="facultada" && !p.facultada ? `<div class="small" style="color:var(--rojo);">No facultada para Autorización de consolidación</div>` : ""}
+    </div>
+  `).join("") || `<p class="small muted">Ninguna persona verificada coincide con la búsqueda.</p>`;
+}
+function seleccionarPersona(fieldId, personaId){
+  const p = PERSONAS_VERIFICADAS.find(x=>x.id===personaId);
+  window._personSelState[fieldId].seleccion = p;
+  document.getElementById(fieldId+"-selected").innerHTML = `Seleccionado: ${p.nombre} (${p.correo})`;
+}
+function personaSeleccionada(fieldId){
+  return window._personSelState[fieldId] ? window._personSelState[fieldId].seleccion : null;
+}
+
 function abrirOtorgarAutorizacion(){
   openModal(`
     <h2>Otorgar Autorización</h2>
-    <div class="field">
-      <label>Receptor específico <span class="req">*</span></label>
-      <input type="text" id="in-aut-receptor" placeholder="Buscar persona verificada (nunca un rol o cargo)" value="Prof. Ana López (docente.demo@docente.aefcm.gob.mx)">
-      <div class="help">El campo admite únicamente una persona específica, verificada — nunca un rol o cargo genérico.</div>
-    </div>
+    ${notaTernura("Otorgar acceso es un acto de confianza acotada — específico, temporal, revocable.")}
+    ${personSelectorHtml("aut-receptor","todas")}
     <div class="field"><label>Objeto (único) <span class="req">*</span></label>
       <select id="in-aut-objeto">${DATA.procesos.map(p=>`<option value="${p.id}">Proceso: ${p.situacion.slice(0,40)}…</option>`).join("")}</select>
     </div>
@@ -1243,16 +1908,16 @@ function abrirOtorgarAutorizacion(){
       <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="guardarAutorizacion()">Otorgar Autorización</button>
     </div>
-  `);
+  `, ()=>renderPersonList("aut-receptor","todas"));
 }
 function guardarAutorizacion(){
-  const receptor = document.getElementById("in-aut-receptor").value.trim();
+  const persona = personaSeleccionada("aut-receptor");
   const fin = document.getElementById("in-aut-fin").value.trim();
-  if(!receptor || !fin){ toast("Faltan campos obligatorios."); return; }
+  if(!persona || !fin){ toast(persona ? "Falta la finalidad." : "Selecciona una persona verificada como receptor."); return; }
   const objeto = document.getElementById("in-aut-objeto").value;
   const id = "A" + (DATA.autorizaciones.length+1);
-  DATA.autorizaciones.unshift({id, tipo:"ordinaria", otorgante:"Familia (ficticia)", receptor, objeto:"Proceso "+objeto, finalidad:fin, inicio:todayISO(), vigenciaDias:90, estado:"vigente"});
-  pushTrace(`Autorización ${id} otorgada; vigente por 3 meses. Registro de trazabilidad de 10 campos creado.`);
+  DATA.autorizaciones.unshift({id, tipo:"ordinaria", otorgante:"Familia (ficticia)", receptor:`${persona.nombre} (${persona.correo})`, objeto:"Proceso "+objeto, finalidad:fin, inicio:todayISO(), vigenciaDias:90, estado:"vigente"});
+  pushTrace(`Autorización ${id} otorgada a ${persona.nombre} (persona verificada); vigente por 3 meses. Registro de trazabilidad de 10 campos creado.`, "autorizacion");
   closeModal(); toast("Autorización otorgada.");
   render();
 }
@@ -1271,7 +1936,7 @@ function revocarAutorizacion(id){
     danger:true, confirmLabel:"Revocar",
     onConfirm:()=>{
       const a = DATA.autorizaciones.find(x=>x.id===id); a.estado="revocada"; a.revocadaEl=todayISO(); a.revocadaPor="Familia (ficticia)";
-      pushTrace(`Autorización ${id} revocada.`);
+      pushTrace(`Autorización ${id} revocada.`, "revocacion");
       toast("Autorización revocada. El acceso futuro queda cerrado.");
       render();
     }
@@ -1280,19 +1945,28 @@ function revocarAutorizacion(id){
 function abrirSolicitarConsolidacion(){
   openModal(`
     <h2>Solicitar Autorización de consolidación</h2>
+    ${notaTernura("Consolidar información es excepcional: siempre con la persona en el centro, nunca por conveniencia administrativa.")}
     <div class="banner banner-warn">Excepcional, específica y temporal — nunca un mecanismo de uso habitual.</div>
     <div class="field"><label>Procesos concretos <span class="req">*</span></label>
       ${DATA.procesos.map(p=>`<div><input type="checkbox" id="chk-${p.id}"> <label for="chk-${p.id}" style="display:inline; font-weight:400;">${p.situacion.slice(0,50)}…</label></div>`).join("")}
     </div>
-    <div class="field"><label>Persona institucional facultada <span class="req">*</span></label>
-      <input type="text" placeholder="Persona específica, previamente facultada" value="Prof. Ana López (docente.demo@docente.aefcm.gob.mx)">
-    </div>
-    <div class="field"><label>Finalidad <span class="req">*</span></label><textarea placeholder="Ej. evaluación psicopedagógica formal solicitada por la Familia"></textarea></div>
+    ${personSelectorHtml("consol-receptor","facultada")}
+    <div class="field"><label>Finalidad <span class="req">*</span></label><textarea id="in-consol-fin" placeholder="Ej. evaluación psicopedagógica formal solicitada por la Familia"></textarea></div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="pushTrace('Autorización de consolidación otorgada (simulada), vigencia corta.'); closeModal(); toast('Autorización de consolidación otorgada.');">Confirmar (con consentimiento de Familia)</button>
+      <button class="btn btn-primary" onclick="confirmarConsolidacion()">Confirmar (con consentimiento de Familia)</button>
     </div>
-  `);
+  `, ()=>renderPersonList("consol-receptor","facultada"));
+}
+function confirmarConsolidacion(){
+  const persona = personaSeleccionada("consol-receptor");
+  const fin = document.getElementById("in-consol-fin").value.trim();
+  if(!persona){ toast("Selecciona una persona institucional facultada como receptor."); return; }
+  if(!persona.facultada){ toast("Esta persona no está facultada para recibir una Autorización de consolidación."); return; }
+  if(!fin){ toast("Falta la finalidad."); return; }
+  pushTrace(`Autorización de consolidación otorgada (simulada) a ${persona.nombre}, persona institucional previamente facultada; vigencia corta.`, "autorizacion");
+  closeModal();
+  toast("Autorización de consolidación otorgada.");
 }
 
 // ============================================================
@@ -1316,9 +1990,151 @@ function abrirExportar(tipo, id){
   `);
 }
 function confirmarExportar(){
-  pushTrace(`Exportación generada para: ${window._exportObjName}. Registrada en trazabilidad.`);
+  pushTrace(`Exportación generada para: ${window._exportObjName}. Registrada en trazabilidad.`, "exportacion");
   closeModal();
   toast("Exportación generada. Esta acción quedó registrada.");
+}
+
+// ============================================================
+// PANTALLA 4 — PANEL INSTITUCIONAL
+// ============================================================
+function screenPanelInstitucional(){
+  const actor = actorInfo(STATE.actor);
+  if(actor.id!=="docA" && actor.id!=="docB"){
+    return `<div class="empty-state">Este panel es exclusivo de personal institucional (Escuela). Administrar relaciones nunca da acceso automático a contenido pedagógico (D9, D19).</div>`;
+  }
+  const rel = DATA_RELACIONES.find(r=>r.vigente);
+  return `
+    <h1>Panel Institucional</h1>
+    <p class="small muted">Gestión de Relaciones institucionales del personal — nunca contenido pedagógico. Administrar aquí no concede, por sí mismo, acceso a ningún Proceso.</p>
+    <div class="section-label">Relación institucional vigente</div>
+    ${rel ? `
+      <div class="card">
+        <div class="dl">
+          <dt>Proceso</dt><dd>${rel.procesoId}</dd>
+          <dt>Docente titular</dt><dd>${actorInfo(rel.docenteId).nombre} (${actorInfo(rel.docenteId).correo})</dd>
+          <dt>Escuela</dt><dd>${rel.escuela}</dd>
+          <dt>Vigente desde</dt><dd>${fmt(rel.inicio)}</dd>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary btn-sm" onclick="abrirCambioDocente()">Registrar cambio de docente</button>
+          <button class="btn btn-secondary btn-sm" onclick="abrirCambioEscuela()">Registrar cambio de escuela</button>
+        </div>
+      </div>
+    ` : `
+      <div class="card dim">
+        <p>No hay ninguna Relación institucional vigente en este momento (se registró un cambio de escuela; ver Historial).</p>
+      </div>
+    `}
+    <div class="section-label">Historial de relaciones</div>
+    ${DATA_RELACIONES.slice().reverse().map(r=>`
+      <div class="small" style="margin-bottom:4px;">
+        ${r.vigente ? "🟢" : "⚪"} ${actorInfo(r.docenteId).nombre} — ${r.procesoId} — ${r.escuela} —
+        ${r.vigente ? `vigente desde ${fmt(r.inicio)}` : `terminada${r.fin?` el ${fmt(r.fin)}`:""}`}
+      </div>
+    `).join("")}
+  `;
+}
+function abrirCambioDocente(){
+  const rel = DATA_RELACIONES.find(r=>r.vigente);
+  const candidatos = ACTORES.filter(a=>a.tipo==="Escuela" && a.id!==rel.docenteId);
+  openModal(`
+    <h2>Registrar cambio de docente</h2>
+    <p class="small muted">Docente saliente: <b>${actorInfo(rel.docenteId).nombre}</b>, sobre el Proceso ${rel.procesoId}.</p>
+    <div class="field"><label>Docente entrante <span class="req">*</span></label>
+      <select id="in-cambio-docente">${candidatos.map(a=>`<option value="${a.id}">${a.nombre} (${a.correo})</option>`).join("")}</select>
+    </div>
+    <div class="warn-box">El docente entrante NO recibirá automáticamente la Autorización del docente saliente. Cualquier Autorización vigente vinculada a esta Relación pierde vigencia de inmediato.</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarCambioDocente()">Registrar cambio</button>
+    </div>
+  `);
+}
+function confirmarCambioDocente(){
+  const nuevoId = document.getElementById("in-cambio-docente").value;
+  const rel = DATA_RELACIONES.find(r=>r.vigente);
+  const salienteId = rel.docenteId;
+  rel.vigente = false; rel.fin = todayISO();
+  DATA_RELACIONES.push({id:"R"+(DATA_RELACIONES.length+1), procesoId:rel.procesoId, docenteId:nuevoId, vigente:true, inicio:todayISO(), escuela:rel.escuela});
+  // Toda Autorización vigente del docente saliente sobre este Proceso pierde vigencia automáticamente
+  const salienteCorreo = actorInfo(salienteId).correo;
+  DATA.autorizaciones.forEach(a=>{
+    if(esVigente(a) && a.receptor.includes(salienteCorreo) && a.objeto==="Proceso "+rel.procesoId){
+      a.estado="vigencia_perdida"; a.motivoPerdida="Cambio de docente"; a.fechaPerdida=todayISO();
+    }
+  });
+  pushTrace(`Cambio de docente registrado en Proceso ${rel.procesoId}: ${actorInfo(salienteId).nombre} → ${actorInfo(nuevoId).nombre}. Ninguna Autorización se transfirió automáticamente.`, "autorizacion");
+  closeModal();
+  toast("Cambio de docente registrado. El nuevo docente no tiene acceso hasta que se le otorgue una nueva Autorización.");
+  render();
+}
+function abrirCambioEscuela(){
+  const rel = DATA_RELACIONES.find(r=>r.vigente);
+  openModal(`
+    <h2>Registrar cambio de escuela</h2>
+    <p class="small muted">Proceso ${rel.procesoId}, actualmente en ${rel.escuela}.</p>
+    <div class="warn-box">Al cambiar de escuela, ninguna Conexión, Autorización o Proceso de la escuela anterior se transfiere automáticamente. La nueva escuela necesitará una nueva finalidad y Autorización específicas de Familia.</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarCambioEscuela()">Registrar cambio de escuela</button>
+    </div>
+  `);
+}
+function confirmarCambioEscuela(){
+  const rel = DATA_RELACIONES.find(r=>r.vigente);
+  const docenteId = rel.docenteId;
+  const escuelaAnterior = rel.escuela;
+  rel.vigente = false; rel.fin = todayISO();
+  const docenteCorreo = actorInfo(docenteId).correo;
+  DATA.autorizaciones.forEach(a=>{
+    if(esVigente(a) && a.receptor.includes(docenteCorreo) && a.objeto==="Proceso "+rel.procesoId){
+      a.estado="vigencia_perdida"; a.motivoPerdida="Cambio de escuela"; a.fechaPerdida=todayISO();
+    }
+  });
+  pushTrace(`Cambio de escuela registrado para el Proceso ${rel.procesoId}: ${escuelaAnterior} → Instituto Ejemplo 2 (ficticio). Ninguna Autorización ni Conexión se transfirió automáticamente.`, "autorizacion");
+  closeModal();
+  toast("Cambio de escuela registrado. La nueva escuela no tiene acceso hasta una nueva Autorización específica.");
+  render();
+}
+
+// ============================================================
+// PANTALLA 18 — BÚSQUEDA CONTEXTUAL
+// ============================================================
+function screenBusqueda(){
+  const actor = actorInfo(STATE.actor);
+  const accesibles = DATA.procesos.filter(p=> actor.id==="fam" ? true : autorizacionVigentePara(actor.id, "Proceso "+p.id));
+  const pid = STATE.params.pid || (accesibles[0] && accesibles[0].id);
+  return `
+    <h1>Búsqueda Contextual</h1>
+    ${accesibles.length===0 ? `<div class="empty-state">No tienes ningún contexto autorizado para buscar todavía.</div>` : `
+    <div class="field">
+      <label>Contexto (Proceso autorizado)</label>
+      <select onchange="goTo('busqueda',{pid:this.value})">
+        ${accesibles.map(p=>`<option value="${p.id}" ${p.id===pid?"selected":""}>${p.situacion.slice(0,50)}…</option>`).join("")}
+      </select>
+    </div>
+    <div class="banner banner-info">Buscando dentro de este contexto: <b>${(DATA.procesos.find(p=>p.id===pid)||{}).situacion||""}</b>. No es posible buscar fuera de los Procesos donde tienes permiso, ni por nombre de Persona acompañada.</div>
+    <div class="field"><input type="text" id="in-busqueda-texto" placeholder="Buscar dentro de este Proceso…" oninput="actualizarBusqueda('${pid}')"></div>
+    <div id="busqueda-resultados"></div>
+    `}
+  `;
+}
+function actualizarBusqueda(pid){
+  const q = document.getElementById("in-busqueda-texto").value.toLowerCase();
+  const cont = document.getElementById("busqueda-resultados");
+  if(!q){ cont.innerHTML = ""; return; }
+  const obs = (DATA.observaciones[pid]||[]).filter(o=>o.descripcion.toLowerCase().includes(q));
+  const ests = (DATA.estrategias[pid]||[]).filter(e=>e.descripcion.toLowerCase().includes(q));
+  const aprs = (DATA.aprendizajes[pid]||[]).filter(a=>a.descripcion.toLowerCase().includes(q));
+  const resultados = [
+    ...obs.map(o=>({tipo:"Observación", texto:o.descripcion})),
+    ...ests.map(e=>({tipo:"Estrategia", texto:e.descripcion})),
+    ...aprs.map(a=>({tipo:"Aprendizaje", texto:a.descripcion})),
+  ];
+  cont.innerHTML = resultados.length
+    ? resultados.map(r=>`<div class="card"><span class="chip chip-activo">${r.tipo}</span><p style="margin-top:6px;">${r.texto}</p></div>`).join("")
+    : `<p class="small muted">Sin resultados dentro de este contexto.</p>`;
 }
 
 // ============================================================
@@ -1349,17 +2165,79 @@ function abrirNotificacion(id){
 }
 
 // ============================================================
+// PANTALLA 21 — AUDITORÍA Y TRAZABILIDAD (FAMILIA)
+// ============================================================
+function screenAuditoria(){
+  const actor = actorInfo(STATE.actor);
+  if(actor.id!=="fam"){
+    return `<div class="empty-state">No autorizado: solo el Administrador familiar consulta este panel sobre su propia Persona acompañada.</div>`;
+  }
+  const catLabels = {autorizacion:"Autorización", acceso:"Acceso", modificacion:"Modificación", comparticion:"Compartición", exportacion:"Exportación", revocacion:"Revocación", general:"Otro"};
+  const relevantes = STATE.trace.filter(t=>t.cat && t.cat!=="general");
+  return `
+    <h1>Auditoría y Trazabilidad</h1>
+    <p class="small muted">Metadatos de acceso y gestión sobre tus Procesos — nunca el contenido accedido. Esto no es un historial pedagógico ni un perfil de comportamiento.</p>
+    ${relevantes.length===0 ? `<div class="empty-state">Sin eventos relevantes registrados todavía en esta sesión.</div>` : `
+    <table style="width:100%; border-collapse:collapse;">
+      <thead><tr style="text-align:left; border-bottom:1px solid var(--gris-300);"><th style="padding:6px 4px;">Cuándo</th><th style="padding:6px 4px;">Tipo</th><th style="padding:6px 4px;">Qué ocurrió</th></tr></thead>
+      <tbody>
+      ${relevantes.map(t=>`<tr style="border-bottom:1px solid var(--gris-100);">
+        <td class="small" style="padding:6px 4px; white-space:nowrap;">${t.t}</td>
+        <td style="padding:6px 4px;"><span class="chip chip-familia">${catLabels[t.cat]||t.cat}</span></td>
+        <td class="small" style="padding:6px 4px;">${t.msg}</td>
+      </tr>`).join("")}
+      </tbody>
+    </table>
+    `}
+  `;
+}
+
+// ============================================================
+// PANTALLA 23 — CONFIGURACIÓN DE NOTIFICACIONES
+// ============================================================
+const CONFIG_NOTIF = { correo:true, push:false, silencioso:false, agrupar:true };
+function screenConfigNotificaciones(){
+  return `
+    <h1>Notificaciones — Configuración</h1>
+    <div class="card">
+      <div class="dl">
+        <dt>Dentro de la app</dt><dd>Siempre activo — canal obligatorio, no se puede desactivar</dd>
+      </div>
+      <hr class="divider">
+      <label class="small" style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${CONFIG_NOTIF.correo?"checked":""} onchange="toggleConfigNotif('correo')"> Correo electrónico</label><br>
+      <label class="small" style="display:flex; align-items:center; gap:8px; margin-top:8px;"><input type="checkbox" ${CONFIG_NOTIF.push?"checked":""} onchange="toggleConfigNotif('push')"> Notificaciones del dispositivo (push)</label><br>
+      <label class="small" style="display:flex; align-items:center; gap:8px; margin-top:8px;"><input type="checkbox" ${CONFIG_NOTIF.silencioso?"checked":""} onchange="toggleConfigNotif('silencioso')"> Modo silencioso</label><br>
+      <label class="small" style="display:flex; align-items:center; gap:8px; margin-top:8px;"><input type="checkbox" ${CONFIG_NOTIF.agrupar?"checked":""} onchange="toggleConfigNotif('agrupar')"> Agrupar notificaciones similares</label>
+    </div>
+    <p class="small muted">Catálogo cerrado: solicitud/aceptación de conexión, solicitud/estado de autorización, revisión pendiente, Acuerdo propuesto/confirmado, seguimiento registrado. No existen categorías de riesgo ni notificaciones que evalúen a la Persona acompañada.</p>
+  `;
+}
+function toggleConfigNotif(key){
+  CONFIG_NOTIF[key] = !CONFIG_NOTIF[key];
+  pushTrace(`Preferencia de notificación "${key}" cambiada a ${CONFIG_NOTIF[key]}.`);
+  toast("Preferencias guardadas.");
+  render();
+}
+
+// ============================================================
 // PANTALLA 22 — IDENTIDAD, RELACIONES Y SESIÓN
 // ============================================================
 function screenSesion(){
+  const actor = actorInfo(STATE.actor);
   return `
     <h1>Mi cuenta</h1>
     <div class="card">
+      <h3>Cómo llegas hoy</h3>
+      <p class="small muted">Un espacio solo para ti, antes de entrar a acompañar. No se guarda, no se comparte, no aparece en ningún panel de trazabilidad ni en ninguna exportación — se borra en cuanto sales de esta pantalla.</p>
+      ${notaTernura("No hace falta que sea nada en concreto. Es solo para que llegues, no para que rindas cuentas.")}
+      <textarea id="in-como-llegas" placeholder="¿Cómo llegas hoy a acompañar?" style="min-height:70px;"></textarea>
+    </div>
+    <div class="card">
       <h3>Datos propios</h3>
       <div class="dl">
-        <dt>Nombre</dt><dd>Usuario Demostrativo (ficticio)</dd>
-        <dt>Correo</dt><dd>${STATE.espacio==='esc'?DATA.usuario.correoEsc:DATA.usuario.correoFam}</dd>
-        <dt>Espacio activo</dt><dd>${STATE.espacio==='esc'?'Escuela':'Familia'} <a href="#" onclick="event.preventDefault(); goTo('seleccion-contexto')">(cambiar)</a></dd>
+        <dt>Nombre</dt><dd>${actor.nombre} (ficticio) — ${actor.rolLabel}</dd>
+        <dt>Correo</dt><dd>${actor.correo}</dd>
+        <dt>Espacio activo</dt><dd>${actor.tipo} <a href="#" onclick="event.preventDefault(); goTo('seleccion-contexto')">(cambiar espacio)</a> · <a href="#" onclick="event.preventDefault(); abrirSelectorActor()">(cambiar actor — solo prototipo)</a></dd>
       </div>
     </div>
     <div class="card">
@@ -1370,11 +2248,6 @@ function screenSesion(){
         <button class="btn btn-secondary btn-sm" onclick="simularInactividad()">Simular cierre por inactividad</button>
         <button class="btn btn-danger btn-sm" onclick="cerrarSesion()">Cerrar sesión</button>
       </div>
-    </div>
-    <div class="card">
-      <h3>Cómo llegas hoy</h3>
-      <p class="small muted">Un espacio solo para ti. No se guarda, no se comparte, no aparece en ningún panel de trazabilidad ni exportación — se borra en cuanto sales de esta pantalla.</p>
-      <textarea id="in-como-llegas" placeholder="¿Cómo llegas hoy a acompañar? No hace falta que sea nada en concreto." style="min-height:70px;"></textarea>
     </div>
     <div class="card">
       <h3>Panel de trazabilidad del prototipo</h3>
@@ -1395,7 +2268,7 @@ function reautenticar(){
 }
 function simularInactividad(){
   pushTrace("Sesión cerrada por inactividad (simulado). Los datos y las autorizaciones no se vieron afectados.");
-  STATE.autenticado=false; STATE.espacio=null; STATE.screen="acceso";
+  STATE.autenticado=false; STATE.espacio=null; STATE.actor="fam"; STATE.screen="acceso";
   toast("Tu sesión se cerró por inactividad.");
   render();
 }
@@ -1406,10 +2279,288 @@ function cerrarSesion(){
     confirmLabel:"Cerrar sesión",
     onConfirm:()=>{
       pushTrace("Sesión cerrada manualmente.");
-      STATE.autenticado=false; STATE.espacio=null; STATE.screen="acceso"; STATE.history=[];
+      STATE.autenticado=false; STATE.espacio=null; STATE.actor="fam"; STATE.screen="acceso"; STATE.history=[];
       render();
     }
   });
+}
+
+// ============================================================
+// CURRICULUMSERVICE (Fase 8.3) — Adecuación curricular NEM 2022
+// ============================================================
+// Aislamiento estricto: este módulo NUNCA lee ni escribe DATA, STATE, ACTORES,
+// PERSONAS_VERIFICADAS, ni ninguna estructura de personas/procesos/autorizaciones.
+// Su única superficie de contacto con el resto de la aplicación son las funciones
+// get*() expuestas al final de este bloque, que devuelven datos curriculares puros
+// (ids y textos del catálogo), nunca nada de una Persona acompañada. La escritura
+// del "Referente curricular" en una Situación/Observación ocurre en el código de
+// esas pantallas, tomando los ids devueltos aquí — nunca al revés.
+//
+// Fuente curricular OPERATIVA (no normativa SEP): curriculo-primaria-nem v1.0,
+// generado a partir de "Generador de Planeaciones Primaria.xlsx". Ver CURRICULUM_FUENTE.
+
+const CURRICULUM_BASE_URL = "https://raw.githubusercontent.com/lalitoelprofefulanito-dot/curriculo-primaria-nem/main/";
+const CURRICULUM_FUENTE = {
+  catalogo: "curriculo-primaria-nem",
+  fuenteOperativa: "Generador de Planeaciones Primaria.xlsx",
+  esNormativoSEP: false, // ver Fase 8.3, sección 29 del encargo: fuente operativa ≠ fuente normativa
+};
+// Archivos del catálogo remoto (nombres lógicos → nombre de archivo real en el repositorio).
+const CURRICULUM_ARCHIVOS = {
+  version: "version.json",
+  manifest: "manifest.json",
+  fases: "fases.json",
+  grados: "grados.json",
+  camposFormativos: "campos-formativos.json",
+  ejesArticuladores: "ejes-articuladores.json",
+  contenidos: "contenidos.json",
+  pdas: "pdas.json",
+  proyectos: "proyectos.json",
+  gradoCampoContenido: "grado-campo-contenido.json",
+  contenidoPda: "contenido-pda.json",
+  proyectoEje: "proyecto-eje.json",
+  proyectoCampo: "proyecto-campo.json",
+  proyectoContenido: "proyecto-contenido.json",
+  proyectoProposito: "proyecto-proposito.json",
+  proyectoPda: "proyecto-pda.json",
+  discrepanciasCampos: "discrepancias-campos.json",
+  discrepanciasEjes: "discrepancias-ejes.json",
+  incidenciasContenidos: "incidencias-contenidos.json",
+  incidenciasProyectos: "incidencias-proyectos.json",
+};
+// Catálogos pequeños necesarios para poblar la interfaz curricular inicial (carga bajo demanda,
+// Fase 8.3 sección 8): se cargan juntos la primera vez que se visita la sección curricular,
+// nunca al abrir Conociéndonos en general.
+const CURRICULUM_ARCHIVOS_INICIALES = ["version","fases","grados","camposFormativos","ejesArticuladores"];
+
+// ---------- estado interno del servicio (aislado de STATE de la aplicación) ----------
+const _curriculumMem = {}; // caché en memoria de la sesión: { nombreArchivo: {version, data} }
+let _curriculumVersionActiva = null;   // versión confirmada y en uso esta sesión
+let _curriculumVersionRevisada = false; // evita revisar version.json más de una vez por visita a la sección
+let _curriculumActualizacionPendiente = null; // {versionNueva, motivo} si una migración de versión falló
+
+// ---------- IndexedDB: única persistencia entre sesiones, exclusiva de datos curriculares ----------
+const CURRICULUM_DB_NAME = "conociendonos-curriculo-cache";
+const CURRICULUM_STORE = "archivos";
+function _curriculumAbrirDB(){
+  return new Promise((resolve, reject)=>{
+    if(!("indexedDB" in window)){ reject(new Error("IndexedDB no disponible")); return; }
+    const req = indexedDB.open(CURRICULUM_DB_NAME, 1);
+    req.onupgradeneeded = ()=>{ req.result.createObjectStore(CURRICULUM_STORE, {keyPath:"archivo"}); };
+    req.onsuccess = ()=>resolve(req.result);
+    req.onerror = ()=>reject(req.error);
+  });
+}
+async function _curriculumDbGet(archivo){
+  try{
+    const db = await _curriculumAbrirDB();
+    return await new Promise((resolve, reject)=>{
+      const tx = db.transaction(CURRICULUM_STORE, "readonly");
+      const req = tx.objectStore(CURRICULUM_STORE).get(archivo);
+      req.onsuccess = ()=>resolve(req.result || null);
+      req.onerror = ()=>reject(req.error);
+    });
+  } catch(e){ return null; } // IndexedDB no disponible: se degrada a caché en memoria únicamente
+}
+async function _curriculumDbSet(archivo, version, data){
+  try{
+    const db = await _curriculumAbrirDB();
+    await new Promise((resolve, reject)=>{
+      const tx = db.transaction(CURRICULUM_STORE, "readwrite");
+      tx.objectStore(CURRICULUM_STORE).put({archivo, version, data, fecha: new Date().toISOString()});
+      tx.oncomplete = resolve; tx.onerror = ()=>reject(tx.error);
+    });
+  } catch(e){ /* degradación silenciosa a memoria; no es un error que deba interrumpir a la persona usuaria */ }
+}
+async function _curriculumDbBorrarVersion(versionAEliminar){
+  // Purga NO destructiva prematura: solo se llama después de confirmar que la nueva versión
+  // cargó correctamente (ver _curriculumRevisarVersion). Nunca se invoca si la migración falló.
+  try{
+    const db = await _curriculumAbrirDB();
+    const tx = db.transaction(CURRICULUM_STORE, "readwrite");
+    const store = tx.objectStore(CURRICULUM_STORE);
+    const req = store.getAll();
+    req.onsuccess = ()=>{
+      (req.result||[]).forEach(entry=>{ if(entry.version===versionAEliminar) store.delete(entry.archivo); });
+    };
+    await new Promise((resolve)=>{ tx.oncomplete = resolve; tx.onerror = resolve; });
+  } catch(e){ /* no crítico */ }
+}
+
+// ---------- comprobación de versión (sección "Versionado y caché" — precisiones aprobadas) ----------
+// Regla: una sesión no mezcla datos de versiones distintas. Toda entrada de caché está etiquetada
+// con la versión con la que se descargó. No se borra la versión anterior hasta que la nueva haya
+// podido cargarse correctamente (validada con los catálogos pequeños). Si la validación falla,
+// se conserva la versión previa como activa y se registra una actualización pendiente.
+// Nota de concurrencia importante: cargarPanelCurricular() pide varios catálogos EN PARALELO
+// (Promise.all), y cada uno internamente necesita conocer la versión activa. Sin protección,
+// varias llamadas concurrentes podrían ejecutar la revisión de versión a la vez y obtener un
+// valor incompleto a mitad de camino — exactamente el riesgo de "mezclar registros entre
+// versiones" que se pidió evitar. _curriculumRevisionPromise garantiza que, si una revisión ya
+// está en curso, cualquier llamada concurrente espera el MISMO resultado final, en vez de
+// disparar una revisión propia o leer un valor todavía no resuelto.
+let _curriculumRevisionPromise = null;
+async function _curriculumRevisarVersion(){
+  if(_curriculumVersionRevisada) return _curriculumVersionActiva;
+  if(_curriculumRevisionPromise) return _curriculumRevisionPromise;
+  _curriculumRevisionPromise = _curriculumRevisarVersionInterno();
+  const resultado = await _curriculumRevisionPromise;
+  _curriculumRevisionPromise = null;
+  return resultado;
+}
+async function _curriculumRevisarVersionInterno(){
+  if(_curriculumVersionRevisada) return _curriculumVersionActiva;
+  _curriculumVersionRevisada = true;
+  let versionRemota = null;
+  try{
+    const r = await fetch(CURRICULUM_BASE_URL + CURRICULUM_ARCHIVOS.version, {cache:"no-store"});
+    if(r.ok){ const j = await r.json(); versionRemota = j.version; }
+  } catch(e){ /* sin red: se maneja abajo */ }
+
+  const entradaVersionCacheada = await _curriculumDbGet(CURRICULUM_ARCHIVOS.version);
+  const versionCacheada = entradaVersionCacheada ? entradaVersionCacheada.data.version : null;
+
+  if(!versionRemota){
+    // Sin conexión (o version.json inalcanzable): usar la última versión válida conocida, si existe.
+    _curriculumVersionActiva = versionCacheada; // puede ser null si nunca se descargó nada
+    return _curriculumVersionActiva;
+  }
+
+  if(!versionCacheada){
+    // Primera vez: no hay nada que migrar, simplemente se adopta la versión remota.
+    _curriculumVersionActiva = versionRemota;
+    await _curriculumDbSet(CURRICULUM_ARCHIVOS.version, versionRemota, {version: versionRemota});
+    return _curriculumVersionActiva;
+  }
+
+  if(versionCacheada === versionRemota){
+    _curriculumVersionActiva = versionRemota;
+    return _curriculumVersionActiva;
+  }
+
+  // Cambio de versión detectado: NO se invalida nada todavía. Se intenta cargar y validar
+  // los catálogos pequeños bajo la nueva versión antes de mover el puntero de versión activa.
+  try{
+    for(const nombre of ["fases","grados","camposFormativos","ejesArticuladores"]){
+      const resp = await fetch(CURRICULUM_BASE_URL + CURRICULUM_ARCHIVOS[nombre], {cache:"no-store"});
+      if(!resp.ok) throw new Error("No se pudo validar "+nombre+" en la versión nueva");
+      const data = await resp.json();
+      await _curriculumDbSet(CURRICULUM_ARCHIVOS[nombre], versionRemota, data);
+      _curriculumMem[CURRICULUM_ARCHIVOS[nombre]] = {version: versionRemota, data};
+    }
+    // Validación exitosa: ahora sí se activa la nueva versión y se purga la anterior (no antes).
+    await _curriculumDbSet(CURRICULUM_ARCHIVOS.version, versionRemota, {version: versionRemota});
+    await _curriculumDbBorrarVersion(versionCacheada);
+    _curriculumVersionActiva = versionRemota;
+    pushTrace(`Catálogo curricular actualizado de la versión ${versionCacheada} a ${versionRemota}.`);
+  } catch(e){
+    // La migración falló: se conserva la versión anterior como activa (nunca se mezclan versiones)
+    // y se deja constancia de que existe una actualización pendiente, sin romper nada.
+    _curriculumVersionActiva = versionCacheada;
+    _curriculumActualizacionPendiente = {versionNueva: versionRemota, motivo: e.message};
+  }
+  return _curriculumVersionActiva;
+}
+
+// ---------- carga genérica de un archivo del catálogo, con caché por versión ----------
+async function _curriculumCargar(nombreLogico){
+  const archivo = CURRICULUM_ARCHIVOS[nombreLogico];
+  const version = await _curriculumRevisarVersion();
+
+  // 1. Caché en memoria de la sesión (más rápida, evita incluso tocar IndexedDB en la misma visita)
+  if(_curriculumMem[archivo] && (version===null || _curriculumMem[archivo].version===version)){
+    return {data:_curriculumMem[archivo].data, estado:"cache-memoria", version:_curriculumMem[archivo].version};
+  }
+
+  // 2. Caché persistente (IndexedDB), solo si coincide con la versión activa de esta sesión
+  const entrada = await _curriculumDbGet(archivo);
+  if(entrada && (version===null || entrada.version===version)){
+    _curriculumMem[archivo] = {version:entrada.version, data:entrada.data};
+    return {data:entrada.data, estado:"cache-indexeddb", version:entrada.version};
+  }
+
+  // 3. Red — carga bajo demanda, solo cuando de verdad se necesita este archivo específico
+  try{
+    const resp = await fetch(CURRICULUM_BASE_URL + archivo);
+    if(!resp.ok) throw new Error("HTTP "+resp.status);
+    const data = await resp.json();
+    const versionParaGuardar = version || (await _curriculumDbGet(CURRICULUM_ARCHIVOS.version))?.data?.version || "desconocida";
+    _curriculumMem[archivo] = {version:versionParaGuardar, data};
+    await _curriculumDbSet(archivo, versionParaGuardar, data);
+    return {data, estado:"red", version:versionParaGuardar};
+  } catch(e){
+    // 4. Sin red y sin caché válida para este archivo: si existe CUALQUIER copia previa (aunque
+    // sea de una versión distinta), se usa como último recurso, marcada explícitamente como tal —
+    // preferible a dejar la pantalla vacía, y nunca se presenta como si fuera la versión vigente.
+    if(entrada){
+      return {data:entrada.data, estado:"cache-obsoleta-sin-conexion", version:entrada.version};
+    }
+    throw new Error("catalogo-no-disponible");
+  }
+}
+
+// ---------- API pública del servicio (nombres conceptuales del encargo, sección 7) ----------
+async function getFases(){ const r = await _curriculumCargar("fases"); return r.data; }
+async function getGrados(){ const r = await _curriculumCargar("grados"); return r.data; }
+async function getCamposFormativos(){ const r = await _curriculumCargar("camposFormativos"); return r.data; }
+async function getEjesArticuladores(){ const r = await _curriculumCargar("ejesArticuladores"); return r.data; }
+
+async function getContenidos(gradoId, campoFormativoId){
+  const rel = (await _curriculumCargar("gradoCampoContenido")).data;
+  const cont = (await _curriculumCargar("contenidos")).data;
+  const idsRelevantes = rel.filter(r=>r.grado_id===gradoId && r.campo_formativo_id===campoFormativoId).map(r=>r.contenido_id);
+  return cont.filter(c=>idsRelevantes.includes(c.id));
+}
+async function getPdas(gradoId, campoFormativoId, contenidoId){
+  // Nota de diseño (documentada en el Diseño Técnico): un mismo texto de Contenido puede repetirse
+  // en distintos Grado+Campo con PDA distintos — por eso esta función exige los tres identificadores,
+  // no solo contenidoId, para no mezclar PDA de un grado con los de otro.
+  const rel = (await _curriculumCargar("contenidoPda")).data;
+  const pdasTodos = (await _curriculumCargar("pdas")).data;
+  const idsRelevantes = rel.filter(r=>r.grado_id===gradoId && r.campo_formativo_id===campoFormativoId && r.contenido_id===contenidoId).map(r=>r.pda_id);
+  return pdasTodos.filter(p=>idsRelevantes.includes(p.registro_id));
+}
+async function getProyectos(gradoId){
+  const proy = (await _curriculumCargar("proyectos")).data;
+  return gradoId ? proy.filter(p=>p.grado_id===gradoId) : proy;
+}
+async function getProyectoEjes(proyectoId){
+  const rel = (await _curriculumCargar("proyectoEje")).data;
+  const ejes = (await _curriculumCargar("ejesArticuladores")).data;
+  const ids = rel.filter(r=>r.proyecto_id===proyectoId).map(r=>r.eje_id);
+  return ejes.filter(e=>ids.includes(e.id));
+}
+async function getProyectoCampos(proyectoId){
+  const rel = (await _curriculumCargar("proyectoCampo")).data;
+  return rel.filter(r=>r.proyecto_id===proyectoId);
+}
+async function getProyectoContenidos(proyectoId){
+  const rel = (await _curriculumCargar("proyectoContenido")).data;
+  return rel.filter(r=>r.proyecto_id===proyectoId);
+}
+async function getProyectoProposito(proyectoId){
+  const rel = (await _curriculumCargar("proyectoProposito")).data;
+  return rel.filter(r=>r.proyecto_id===proyectoId);
+}
+async function getProyectoPdas(proyectoId){
+  const rel = (await _curriculumCargar("proyectoPda")).data;
+  return rel.filter(r=>r.proyecto_id===proyectoId);
+}
+async function getDiscrepanciasYIncidencias(){
+  // Expone las auditorías ya existentes en la fuente (Fase 8.3, sección 28): nunca se corrigen
+  // ni se ocultan silenciosamente, se conservan y se muestran como lo que son.
+  const [dc, de, ic, ip] = await Promise.all([
+    _curriculumCargar("discrepanciasCampos"), _curriculumCargar("discrepanciasEjes"),
+    _curriculumCargar("incidenciasContenidos"), _curriculumCargar("incidenciasProyectos"),
+  ]);
+  return {discrepanciasCampos:dc.data, discrepanciasEjes:de.data, incidenciasContenidos:ic.data, incidenciasProyectos:ip.data};
+}
+function getCurriculumEstadoConexion(){
+  return {
+    versionActiva: _curriculumVersionActiva,
+    actualizacionPendiente: _curriculumActualizacionPendiente,
+    fuente: CURRICULUM_FUENTE,
+  };
 }
 
 // ============================================================

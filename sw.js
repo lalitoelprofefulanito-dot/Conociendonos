@@ -2,7 +2,7 @@
    Sube este número (v1 -> v2 -> v3...) cada vez que subas una versión
    nueva de index.html a GitHub: es la única forma en que los
    teléfonos que ya instalaron la app se enteran de que hay cambios. */
-const CACHE_NAME = "conociendonos-2-0-prototipo-v2";
+const CACHE_NAME = "conociendonos-2-0-prototipo-v3";
 
 const ARCHIVOS_DE_LA_APP = [
   "./",

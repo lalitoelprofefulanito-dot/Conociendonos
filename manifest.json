@@ -1,7 +1,7 @@
 {
   "name": "Conociéndonos 2.0 — Prototipo navegable",
   "short_name": "Conociéndonos",
-  "description": "Prototipo navegable (Iteración 1) de Conociéndonos 2.0 — Familia · Escuela · Puente. Datos únicamente ficticios, con fines de demostración.",
+  "description": "Prototipo navegable (Iteración 3 — Presencia y Ternura, con Integración Curricular NEM) de Conociéndonos 2.0 — Familia · Escuela · Puente. Datos únicamente ficticios, con fines de demostración.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
